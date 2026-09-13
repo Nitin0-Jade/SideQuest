@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+
+    <h1>SideQuest</h1>
+
+    <a href="/create" class="btn btn-primary mb-4">
+        Post a Quest
+    </a>
+
+    {% for quest in quests %}
+
+        <div class="card mb-3">
+            <div class="card-body">
+
+                <h3>
+                    {{ quest["title"] }}
+                </h3>
+
+                <p>
+                    {{ quest["description"] }}
+                </p>
+
+                <p>
+                    Category: {{ quest["category"] }}
+                </p>
+
+                <p>
+                    Status: {{ quest["status"] }}
+                </p>
+
+                <a href="/quest/{{ quest['id'] }}" class="btn btn-secondary">
+                    View Quest
+                </a>
+
+            </div>
+        </div>
+
+    {% endfor %}
+
+{% endblock %}

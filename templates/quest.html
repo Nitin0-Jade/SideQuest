@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quest
+{% endblock %}
+
+{% block main %}
+
+    <h1>{{ quest["title"] }}</h1>
+
+    <p>{{ quest["description"] }}</p>
+
+    <p>Category: {{ quest["category"] }}</p>
+
+    <p>Status: {{ quest["status"] }}</p>
+
+{% endblock %}
