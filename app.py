@@ -4,6 +4,7 @@ import sqlite3
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
+from functools import wraps
 
 app = Flask(__name__)
 
@@ -15,6 +16,15 @@ def get_db():
     connection = sqlite3.connect("sidequest.db")
     connection.row_factory = sqlite3.Row
     return connection
+
+def login_required(function):
+    @wraps(function)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect("/login")
+        return function(*args, **kwargs)
+
+    return decorated_function
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -123,6 +133,7 @@ def index():
     return render_template("index.html", quests=quests)
 
 @app.route("/create", methods=["GET", "POST"])
+@login_required
 def create():
     if request.method == "POST":
         title=request.form.get("title")
@@ -142,14 +153,53 @@ def create():
         
         if not category:
             return "Please return a valid category"
+
+        if category=="carpool":
+            origin=request.form.get("origin")
+            destination=request.form.get("destination")
+            travel_date=request.form.get("travel_date")
+            travel_time=request.form.get("travel_time")
+            seats=request.form.get("seats")
+            estimated_fare=request.form.get("estimated_fare")
+
+            if not origin:
+                return "Please enter a valid place"
+
+            if not destination:
+                return "Please enter a valid place"
+
+            if not travel_date:
+                return "Please enter a valid date"
+
+            if not travel_time:
+                return "Please enter a valid time"
+
+            if not seats:
+                return "Please enter valid no. of seats"
+
+            if not estimated_fare:
+                return "Please enter a valid fare"
+
+            try:
+                seats = int(seats)
+                estimated_fare = float(estimated_fare)
+            except ValueError:
+                return "Please enter valid numbers for seats and fare", 400
+
+            if not seats>0 or  not estimated_fare>=0 :
+                return "Please enter a valid number"
+
+            user_id = session["user_id"]
+
+            new_quest=connection.execute("INSERT INTO quests(title,description,category,user_id) VALUES(?,?,?,?) ",(title,description,category,user_id))
+        
+            quest_id=new_quest.lastrowid
+            
+            carpool_fields=connection.execute("INSERT INTO carpools(quest_id,origin,destination,travel_date,travel_time,seats,estimated_fare) VALUES(?,?,?,?,?,?,?)",(quest_id,origin,destination,travel_date,travel_time,seats,estimated_fare))
          
-        #to add category options
-
-        user_id = session["user_id"]
-
-        connection.execute("INSERT INTO quests(title,description,category,user_id) VALUES(?,?,?,?) ",title,description,category,user_id)
         connection.commit()
         connection.close()
+
         return redirect("/")
 
     else:
@@ -157,21 +207,144 @@ def create():
 
 
 @app.route("/quest/<int:quest_id>")
+@login_required
 def quest(quest_id):
-    connection=get_db()
-    quest=connection.execute("SELECT *FROM quests WHERE id = ?",(quest_id,)).fetchone()
+    connection = get_db()
+
+    quest = connection.execute("SELECT * FROM quests WHERE id = ?",(quest_id,)).fetchone()
+    carpool = connection.execute(
+        """
+        SELECT *
+        FROM carpools
+        JOIN quests ON carpools.quest_id = quests.id
+        WHERE quests.id = ?
+        """,
+        (quest_id,)
+    ).fetchone()
+
+    participant_count = connection.execute(
+        """
+        SELECT COUNT(*) AS participant_count
+        FROM quest_participants
+        WHERE quest_id = ?
+        """,
+        (quest_id,)
+    ).fetchone()
+
+    participant_count = participant_count["participant_count"]
+    estimated_fare=carpool["estimated_fare"]
+    fare_per_person=None
+    if participant_count>0:
+        fare_per_person = estimated_fare / participant_count
+
+    total_seats = carpool["seats"] if carpool else 0
+    available_seats = total_seats - participant_count
+
     connection.close()
-    return render_template("quest.html", quest=quest)
-    
+
+    return render_template(
+        "quest.html",
+        quest=quest,
+        carpool=carpool,
+        participant_count=participant_count,
+        total_seats=total_seats,
+        available_seats=available_seats,
+        fare_per_person=fare_per_person,
+        estimated_fare=estimated_fare
+    )
+
 
 @app.route("/myquests")
+@login_required
 def myquest():
-    user_id=session["user_id"]
-    connection=get_db()
-    quests=connection.execute("SELECT *FROM quests WHERE user_id = ? ORDER BY created_at DESC",(user_id,)).fetchall()
+    user_id = session["user_id"]
+
+    connection = get_db()
+
+    quests = connection.execute(
+        "SELECT * FROM quests WHERE user_id = ? ORDER BY created_at DESC",
+        (user_id,)
+    ).fetchall()
+
     connection.close()
-    return render_template("myquests.html",quests=quests)
+
+    return render_template("myquests.html", quests=quests)
 
 
+@app.route("/quest/<int:quest_id>/join", methods=["POST"])
+@login_required
+def join(quest_id):
 
+    user_id = session["user_id"]
 
+    connection = get_db()
+
+    # Make sure the quest exists
+    quest = connection.execute(
+        "SELECT * FROM quests WHERE id = ?",
+        (quest_id,)
+    ).fetchone()
+
+    if quest is None:
+        connection.close()
+        return "Quest not found", 404
+
+    # Only carpool quests can be joined
+    if quest["category"] != "carpool":
+        connection.close()
+        return "This quest cannot be joined", 400
+
+    # Get the carpool details
+    carpool = connection.execute(
+        "SELECT * FROM carpools WHERE quest_id = ?",
+        (quest_id,)
+    ).fetchone()
+
+    if carpool is None:
+        connection.close()
+        return "Carpool not found", 404
+
+    # Check whether this user already joined
+    existing = connection.execute(
+        """
+        SELECT *
+        FROM quest_participants
+        WHERE quest_id = ? AND user_id = ?
+        """,
+        (quest_id, user_id)
+    ).fetchone()
+
+    if existing:
+        connection.close()
+        return "You already joined this quest", 400
+
+    # Count current participants
+    participant_count = connection.execute(
+        """
+        SELECT COUNT(*) AS participant_count
+        FROM quest_participants
+        WHERE quest_id = ?
+        """,
+        (quest_id,)
+    ).fetchone()
+
+    participant_count = participant_count["participant_count"]
+
+    # Check whether the ride is full
+    if participant_count >= carpool["seats"]:
+        connection.close()
+        return "Seats are full, please try another one", 400
+
+    # Add the user as a participant
+    connection.execute(
+        """
+        INSERT INTO quest_participants (quest_id, user_id)
+        VALUES (?, ?)
+        """,
+        (quest_id, user_id)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect(f"/quest/{quest_id}")

@@ -9,8 +9,21 @@
         <form action="/create" method="post">
             <div class="mb-3">
                 <input name="title" placeholder="Title" autofocus autocomplete="off" type="text">
-                <input name="description" placeholder="Description" autofocus autocomplete="off" type="text">
-                <input name="category" placeholder="Category" autofocus autocomplete="off" type="text">
+                <input name="description" placeholder="Description" autocomplete="off" type="text">
+                <select name="category">
+                    <option value="carpool">Carpool / Fare Split</option>
+                    <option value="lost_found">Lost & Found</option>
+                    <option value="expense">Expense Split</option>
+                </select>
+                <fieldset>
+                    <legend>Carpool Details</legend>
+                    <input name="origin" type="text">
+                    <input name="destination" type="text">
+                    <input name="travel_date" type="date">
+                    <input name="travel_time" type="time">
+                    <input name="seats" type="number">
+                    <input name="estimated_fare" type="number">
+                </fieldset>
             </div>
             <button class="btn btn-primary" type="submit">Create</button>
         </form>

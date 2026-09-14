@@ -14,4 +14,25 @@
 
     <p>Status: {{ quest["status"] }}</p>
 
+    {% if carpool %}
+        <p>{{ carpool["origin"] }}</p>
+        <p>{{ carpool["destination"] }}</p>
+        <p>{{ carpool["travel_date"] }}</p>
+        <p>{{ carpool["travel_time"] }}</p>
+        <p>{{ carpool["seats"] }}</p>
+        <p>{{ carpool["estimated_fare"] }}</p>
+        <form action="/quest/{{ quest['id'] }}/join"  method="post">
+                <button type="submit">Join Ride</button>
+        </form>
+        <p>Seats: {{ carpool["seats"] }}</p>
+        <p>Joined: {{ participant_count }}</p>
+        <p>Available: {{ available_seats }}</p>
+        <p>Total Fare: {{ estimated_fare }}</p>
+        {% if fare_per_person is not none %}
+            <p>Share per person: ₹{{ fare_per_person }}</p>
+        {% else %}
+            <p>Share per person: Not calculated yet</p>
+        {% endif %}
+    {% endif %}
+
 {% endblock %}
