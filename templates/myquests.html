@@ -1,0 +1,464 @@
+{% extends "layout.html" %}
+
+{% block title %}
+My Activity
+{% endblock %}
+
+{% block main %}
+
+<section class="sq-activity">
+
+<!-- HEADER -->
+<div class="sq-activity-hero">
+
+    <div>
+        <div class="sq-eyebrow">
+            YOUR SIDEQUEST
+        </div>
+
+        <h1 class="sq-activity-title">
+            My Activity<span class="sq-title-dot">.</span>
+        </h1>
+
+        <p class="sq-activity-subtitle">
+            Everything you've created, joined, and helped move forward.
+        </p>
+    </div>
+
+    <a
+        href="/create"
+        class="btn btn-primary sq-activity-create"
+    >
+        ＋ New Quest
+    </a>
+
+</div>
+
+
+<!-- QUICK STATS -->
+<div class="sq-activity-stats">
+
+    <div class="sq-activity-stat">
+
+        <span class="sq-activity-stat-number">
+            {{ created_quests|length }}
+        </span>
+
+        <span class="sq-activity-stat-label">
+            CREATED
+        </span>
+
+    </div>
+
+
+    <div class="sq-activity-stat">
+
+        <span class="sq-activity-stat-number">
+            {{ joined_carpools|length }}
+        </span>
+
+        <span class="sq-activity-stat-label">
+            RIDES JOINED
+        </span>
+
+    </div>
+
+
+    <div class="sq-activity-stat">
+
+        <span class="sq-activity-stat-number">
+            {{ joined_expenses|length }}
+        </span>
+
+        <span class="sq-activity-stat-label">
+            EXPENSES JOINED
+        </span>
+
+    </div>
+
+
+    <div class="sq-activity-stat sq-activity-stat-highlight">
+
+        <span class="sq-activity-stat-number">
+            {{ created_quests|length + joined_carpools|length + joined_expenses|length }}
+        </span>
+
+        <span class="sq-activity-stat-label">
+            TOTAL ACTIVITY
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- CREATED -->
+<section class="sq-activity-section">
+
+    <div class="sq-activity-section-head">
+
+        <div>
+            <span class="sq-section-kicker">
+                YOUR POSTS
+            </span>
+
+            <h2 class="sq-activity-section-title">
+                Created by me
+            </h2>
+        </div>
+
+        <span class="sq-activity-count">
+            {{ created_quests|length }}
+        </span>
+
+    </div>
+
+
+    {% if created_quests %}
+
+        <div class="sq-activity-grid">
+
+            {% for quest in created_quests %}
+
+                <article class="sq-activity-card">
+
+                    <div class="sq-activity-card-top">
+
+                        {% if quest["category"] == "carpool" %}
+
+                            <span class="sq-category sq-category-carpool">
+                                🚗 CARPOOL
+                            </span>
+
+                        {% elif quest["category"] == "lost_found" %}
+
+                            <span class="sq-category sq-category-lost">
+                                🔎 LOST &amp; FOUND
+                            </span>
+
+                        {% elif quest["category"] == "expense" %}
+
+                            <span class="sq-category sq-category-expense">
+                                💰 EXPENSE
+                            </span>
+
+                        {% else %}
+
+                            <span class="sq-category">
+                                ✦ {{ quest["category"] }}
+                            </span>
+
+                        {% endif %}
+
+
+                        {% if quest["status"] == "open" %}
+
+                            <span class="sq-status sq-status-open">
+                                OPEN
+                            </span>
+
+                        {% else %}
+
+                            <span class="sq-status sq-status-complete">
+                                COMPLETED
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <h3 class="sq-activity-card-title">
+                        {{ quest["title"] }}
+                    </h3>
+
+
+                    <p class="sq-activity-card-description">
+                        {{ quest["description"] }}
+                    </p>
+
+
+                    <div class="sq-activity-card-footer">
+
+                        <span class="sq-activity-quest-id">
+                            QUEST #{{ "%04d"|format(quest["id"]) }}
+                        </span>
+
+                        <a
+                            href="/quest/{{ quest['id'] }}"
+                            class="sq-view-quest"
+                        >
+                            Open →
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="sq-activity-empty">
+
+            <div class="sq-empty-symbol">
+                +
+            </div>
+
+            <h3>
+                No quests yet.
+            </h3>
+
+            <p>
+                Got a problem, plan, ride, or expense to share?
+                Put it on the board.
+            </p>
+
+            <a
+                href="/create"
+                class="btn btn-primary"
+            >
+                Create Your First Quest →
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- JOINED CARPOOLS -->
+<section class="sq-activity-section">
+
+    <div class="sq-activity-section-head">
+
+        <div>
+            <span class="sq-section-kicker">
+                ON THE MOVE
+            </span>
+
+            <h2 class="sq-activity-section-title">
+                Rides I joined
+            </h2>
+        </div>
+
+        <span class="sq-activity-count">
+            {{ joined_carpools|length }}
+        </span>
+
+    </div>
+
+
+    {% if joined_carpools %}
+
+        <div class="sq-activity-grid">
+
+            {% for quest in joined_carpools %}
+
+                <article class="sq-activity-card sq-ride-card">
+
+                    <div class="sq-activity-card-top">
+
+                        <span class="sq-category sq-category-carpool">
+                            🚗 CARPOOL
+                        </span>
+
+                        {% if quest["status"] == "open" %}
+
+                            <span class="sq-status sq-status-open">
+                                OPEN
+                            </span>
+
+                        {% else %}
+
+                            <span class="sq-status sq-status-complete">
+                                COMPLETED
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <h3 class="sq-activity-card-title">
+                        {{ quest["title"] }}
+                    </h3>
+
+
+                    <p class="sq-activity-card-description">
+                        {{ quest["description"] }}
+                    </p>
+
+
+                    <div class="sq-joined-label">
+                        YOU ARE PART OF THIS RIDE
+                    </div>
+
+
+                    <div class="sq-activity-card-footer">
+
+                        <span class="sq-activity-quest-id">
+                            QUEST #{{ "%04d"|format(quest["id"]) }}
+                        </span>
+
+                        <a
+                            href="/quest/{{ quest['id'] }}"
+                            class="sq-view-quest"
+                        >
+                            View Ride →
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="sq-activity-empty sq-activity-empty-small">
+
+            <div class="sq-empty-symbol">
+                🚗
+            </div>
+
+            <p>
+                You haven't joined a ride yet.
+            </p>
+
+            <a
+                href="/findride"
+                class="sq-small-action"
+            >
+                Find a ride →
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- JOINED EXPENSES -->
+<section class="sq-activity-section">
+
+    <div class="sq-activity-section-head">
+
+        <div>
+            <span class="sq-section-kicker">
+                FAIR SHARE
+            </span>
+
+            <h2 class="sq-activity-section-title">
+                Expenses I joined
+            </h2>
+        </div>
+
+        <span class="sq-activity-count">
+            {{ joined_expenses|length }}
+        </span>
+
+    </div>
+
+
+    {% if joined_expenses %}
+
+        <div class="sq-activity-grid">
+
+            {% for quest in joined_expenses %}
+
+                <article class="sq-activity-card sq-expense-card">
+
+                    <div class="sq-activity-card-top">
+
+                        <span class="sq-category sq-category-expense">
+                            💰 EXPENSE
+                        </span>
+
+                        {% if quest["status"] == "open" %}
+
+                            <span class="sq-status sq-status-open">
+                                OPEN
+                            </span>
+
+                        {% else %}
+
+                            <span class="sq-status sq-status-complete">
+                                COMPLETED
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <h3 class="sq-activity-card-title">
+                        {{ quest["title"] }}
+                    </h3>
+
+
+                    <p class="sq-activity-card-description">
+                        {{ quest["description"] }}
+                    </p>
+
+
+                    <div class="sq-joined-label">
+                        YOU ARE PART OF THIS EXPENSE
+                    </div>
+
+
+                    <div class="sq-activity-card-footer">
+
+                        <span class="sq-activity-quest-id">
+                            QUEST #{{ "%04d"|format(quest["id"]) }}
+                        </span>
+
+                        <a
+                            href="/quest/{{ quest['id'] }}"
+                            class="sq-view-quest"
+                        >
+                            View Split →
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="sq-activity-empty sq-activity-empty-small">
+
+            <div class="sq-empty-symbol">
+                💰
+            </div>
+
+            <p>
+                You haven't joined an expense yet.
+            </p>
+
+            <a
+                href="/"
+                class="sq-small-action"
+            >
+                Explore quests →
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+</section>
+
+{% endblock %}

@@ -1,45 +1,412 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Home
+Home
 {% endblock %}
 
 {% block main %}
 
-    <h1>SideQuest</h1>
+<!-- =====================================================
+     HERO
+===================================================== -->
 
-    <a href="/create" class="btn btn-primary mb-4">
-        Post a Quest
+<section class="sq-hero">
+
+<div class="sq-eyebrow">
+    YOROZUYA // SIDEQUEST
+</div>
+
+<h1 class="sq-hero-title">
+    Your campus.
+    <br>
+    Your people.
+    <br>
+    Your
+    <span class="highlight">quests.</span>
+</h1>
+
+<p class="sq-hero-description">
+    One place for the little things that make campus life easier —
+    shared rides, lost items, expense splits and whatever your
+    fellow students need help with.
+</p>
+
+<div class="sq-hero-actions">
+
+    <a
+        href="/create"
+        class="btn btn-primary"
+    >
+        ＋ Create a Quest
     </a>
 
-    {% for quest in quests %}
+    <a
+        href="/findride"
+        class="btn btn-secondary"
+    >
+        Find a Ride →
+    </a>
 
-        <div class="card mb-3">
-            <div class="card-body">
+    <a
+        href="/myquests"
+        class="btn btn-secondary"
+    >
+        My Activity
+    </a>
 
-                <h3>
+</div>
+
+
+<div class="sq-hero-metric-row">
+
+    <div class="sq-hero-metric">
+        <span class="sq-hero-metric-value">
+            {{ quests|length }}
+        </span>
+
+        <span class="sq-hero-metric-label">
+            QUESTS ON BOARD
+        </span>
+    </div>
+
+    <div class="sq-hero-metric">
+        <span class="sq-hero-metric-value">
+            03
+        </span>
+
+        <span class="sq-hero-metric-label">
+            CORE MODULES
+        </span>
+    </div>
+
+    <div class="sq-hero-metric">
+        <span class="sq-hero-metric-value">
+            24/7
+        </span>
+
+        <span class="sq-hero-metric-label">
+            CAMPUS NETWORK
+        </span>
+    </div>
+
+</div>
+
+</section>
+
+<!-- =====================================================
+     FEATURE STRIP
+===================================================== -->
+
+<section class="sq-feature-strip">
+
+<div class="sq-feature-card">
+    <span class="sq-feature-icon">🚗</span>
+
+    <div>
+        <strong>Carpool</strong>
+
+        <small>
+            Share rides. Split fares.
+        </small>
+    </div>
+</div>
+
+
+<div class="sq-feature-card">
+    <span class="sq-feature-icon">🔎</span>
+
+    <div>
+        <strong>Lost &amp; Found</strong>
+
+        <small>
+            Find what disappeared.
+        </small>
+    </div>
+</div>
+
+
+<div class="sq-feature-card">
+    <span class="sq-feature-icon">💰</span>
+
+    <div>
+        <strong>Expense Split</strong>
+
+        <small>
+            Keep the math fair.
+        </small>
+    </div>
+</div>
+
+</section>
+
+<!-- =====================================================
+     LATEST QUESTS
+===================================================== -->
+
+<section>
+
+<div class="sq-section-header">
+
+    <div>
+        <div class="sq-section-kicker">
+            LIVE BOARD
+        </div>
+
+        <h2 class="sq-section-title">
+            Latest quests
+        </h2>
+    </div>
+
+    <span class="sq-board-count">
+        {{ quests|length }} LIVE
+    </span>
+
+</div>
+
+
+{% if quests %}
+
+    <div class="sq-quest-grid">
+
+        {% for quest in quests %}
+
+            <article class="sq-quest-card">
+
+                <div class="sq-quest-top">
+
+                    {% if quest["category"] == "carpool" %}
+
+                        <span class="sq-category sq-category-carpool">
+                            🚗 CARPOOL
+                        </span>
+
+                    {% elif quest["category"] == "lost_found" %}
+
+                        <span class="sq-category sq-category-lost">
+                            🔎 LOST &amp; FOUND
+                        </span>
+
+                    {% elif quest["category"] == "expense" %}
+
+                        <span class="sq-category sq-category-expense">
+                            💰 EXPENSE
+                        </span>
+
+                    {% else %}
+
+                        <span class="sq-category">
+                            ✦ {{ quest["category"] }}
+                        </span>
+
+                    {% endif %}
+
+
+                    {% if quest["status"] == "open" %}
+
+                        <span class="sq-status sq-status-open">
+                            OPEN
+                        </span>
+
+                    {% else %}
+
+                        <span class="sq-status sq-status-complete">
+                            COMPLETED
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <h3 class="sq-quest-card-title">
                     {{ quest["title"] }}
                 </h3>
 
-                <p>
-                    {{ quest["description"] }}
+
+                <p class="sq-quest-card-description">
+
+                    {% if quest["description"] %}
+
+                        {{ quest["description"] }}
+
+                    {% else %}
+
+                        No description provided.
+
+                    {% endif %}
+
                 </p>
 
-                <p>
-                    Category: {{ quest["category"] }}
-                </p>
 
-                <p>
-                    Status: {{ quest["status"] }}
-                </p>
+                <div class="sq-quest-card-divider"></div>
 
-                <a href="/quest/{{ quest['id'] }}" class="btn btn-secondary">
-                    View Quest
-                </a>
 
-            </div>
+                <div class="sq-quest-card-bottom">
+
+                    <div class="sq-quest-id">
+                        QUEST #{{ "%04d"|format(quest["id"]) }}
+                    </div>
+
+                    <a
+                        href="/quest/{{ quest['id'] }}"
+                        class="sq-view-quest"
+                    >
+                        Open Quest
+                        <span>→</span>
+                    </a>
+
+                </div>
+
+            </article>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="sq-empty">
+
+        <h3>
+            The board is quiet.
+        </h3>
+
+        <p>
+            Be the first student to create a quest.
+        </p>
+
+        <a
+            href="/create"
+            class="btn btn-primary mt-3"
+        >
+            Create the First Quest →
+        </a>
+
+    </div>
+
+{% endif %}
+
+</section>
+
+<!-- =====================================================
+     HOW IT WORKS
+===================================================== -->
+
+<section class="sq-process">
+
+<div class="sq-section-header">
+
+    <div>
+        <div class="sq-section-kicker">
+            THE LOOP
         </div>
 
-    {% endfor %}
+        <h2 class="sq-section-title">
+            Post. Discover. Connect.
+        </h2>
+    </div>
+
+</div>
+
+
+<div class="sq-process-grid">
+
+    <div class="sq-process-step">
+
+        <span class="sq-process-number">
+            01
+        </span>
+
+        <h3>
+            POST
+        </h3>
+
+        <p>
+            Turn your everyday campus problem into a quest.
+        </p>
+
+    </div>
+
+
+    <div class="sq-process-line"></div>
+
+
+    <div class="sq-process-step">
+
+        <span class="sq-process-number">
+            02
+        </span>
+
+        <h3>
+            DISCOVER
+        </h3>
+
+        <p>
+            Find other students facing the same thing.
+        </p>
+
+    </div>
+
+
+    <div class="sq-process-line"></div>
+
+
+    <div class="sq-process-step">
+
+        <span class="sq-process-number">
+            03
+        </span>
+
+        <h3>
+            COMPLETE
+        </h3>
+
+        <p>
+            Join forces and get it done together.
+        </p>
+
+    </div>
+
+</div>
+
+</section>
+
+<!-- =====================================================
+     CTA
+===================================================== -->
+
+<section class="sq-final-cta">
+
+<div class="sq-final-cta-glow"></div>
+
+<div class="sq-final-cta-content">
+
+    <div class="sq-eyebrow">
+        GOT A SIDE QUEST?
+    </div>
+
+    <h2>
+        Make the campus
+        <span>easier.</span>
+    </h2>
+
+    <p>
+        Somebody probably needs exactly what you're about to post.
+    </p>
+
+    <a
+        href="/create"
+        class="btn btn-primary"
+    >
+        Start a Quest →
+    </a>
+
+</div>
+
+<div class="sq-final-symbol">
+    ✦
+</div>
+
+</section>
 
 {% endblock %}

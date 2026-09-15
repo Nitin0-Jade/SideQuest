@@ -1,16 +1,142 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Register
+Register
 {% endblock %}
 
 {% block main %}
-    <form action="/register" method="post">
-        <div>
-            <input name="username" placeholder="Username" type="text">
-            <input name="password" placeholder="Password" type="password">
-            <input name="confirmation" placeholder="Confirmation" type="password">
+
+<section class="sq-auth-page">
+
+<div class="sq-auth-shell sq-register-shell">
+
+    <div class="sq-auth-topline">
+        <span>NEW PLAYER</span>
+    </div>
+
+    <div class="sq-auth-mark">
+    </div>
+
+    <div class="sq-eyebrow">
+        JOIN THE CAMPUS
+    </div>
+
+    <h1 class="sq-auth-title">
+        Start your
+        <span class="sq-auth-accent">
+            quest.
+        </span>
+    </h1>
+
+    <p class="sq-auth-subtitle">
+        One account. Every campus problem.
+        Rides, lost items, expense splits and everything in between.
+    </p>
+
+    <div class="sq-register-perks">
+
+        <div class="sq-register-perk">
+            <span>  </span>
+            <div>
+                <strong>DISCOVER</strong>
+                <small>Find what students need.</small>
+            </div>
         </div>
-        <button type="submit">Register</button>
+
+        <div class="sq-register-perk">
+            <span>  </span>
+            <div>
+                <strong>CONNECT</strong>
+                <small>Join the right quest.</small>
+            </div>
+        </div>
+
+        <div class="sq-register-perk">
+            <span>  </span>
+            <div>
+                <strong>COMPLETE</strong>
+                <small>Get it done together.</small>
+            </div>
+        </div>
+
+    </div>
+
+    <form action="/register" method="post">
+
+        <div class="mb-3">
+            <label for="username" class="form-label">
+                Username
+            </label>
+
+            <input
+                id="username"
+                name="username"
+                type="text"
+                class="form-control"
+                autocomplete="username"
+                autofocus
+                required
+                placeholder="Choose your quest name"
+            >
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">
+                Password
+            </label>
+
+            <input
+                id="password"
+                name="password"
+                type="password"
+                class="form-control"
+                autocomplete="new-password"
+                required
+                placeholder="Create a password"
+            >
+        </div>
+
+        <div class="mb-3">
+            <label for="confirmation" class="form-label">
+                Confirm Password
+            </label>
+
+            <input
+                id="confirmation"
+                name="confirmation"
+                type="password"
+                class="form-control"
+                autocomplete="new-password"
+                required
+                placeholder="Enter it one more time"
+            >
+        </div>
+
+        <button
+            type="submit"
+            class="btn btn-primary w-100 sq-register-button"
+        >
+            Create Account
+            <span>→</span>
+        </button>
+
     </form>
+
+    <div class="sq-auth-switch">
+        Already part of the board?
+        <a href="/login">Log in →</a>
+    </div>
+
+    <div class="sq-register-footer">
+        <span>RIDES</span>
+        <i></i>
+        <span>LOST &amp; FOUND</span>
+        <i></i>
+        <span>EXPENSES</span>
+    </div>
+
+</div>
+
+</section>
+
 {% endblock %}

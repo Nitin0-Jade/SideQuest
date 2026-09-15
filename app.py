@@ -226,7 +226,7 @@ def create():
             amount=request.form.get("amount")
             try:
                 amount = float(amount)
-            except ValueError:
+            except (ValueError,TypeError):
                 return "Please enter valid amount", 400
             if amount is None:
                 return "Enter a valid amount"
@@ -241,6 +241,10 @@ def create():
             quest_id=new_quest.lastrowid
 
             expense_fields=connection.execute("INSERT INTO expenses(quest_id,description,amount) VALUES(?,?,?)",(quest_id,description,amount))
+
+            expense_id = expense_fields.lastrowid
+
+            connection.execute("INSERT INTO expense_participants (expense_id, user_id) VALUES (?, ?)",(expense_id, user_id))
 
         connection.commit()
         connection.close()
@@ -257,24 +261,28 @@ def quest(quest_id):
     connection = get_db()
 
     quest = connection.execute("SELECT * FROM quests WHERE id = ?",(quest_id,)).fetchone()
+    if quest is None:
+        connection.close()
+        return "Quest not found", 404
+
     carpool = connection.execute(
-        "
+        """
         SELECT *
         FROM carpools
         JOIN quests ON carpools.quest_id = quests.id
         WHERE quests.id = ?
-        ",
+        """,
         (quest_id,)
     ).fetchone()
 
     lost_item=connection.execute("SELECT * FROM lost_items WHERE quest_id = ?",(quest_id,)).fetchone()
 
     participant_count = connection.execute(
-        "
+        """
         SELECT COUNT(*) AS participant_count
         FROM quest_participants
         WHERE quest_id = ?
-        ",
+        """,
         (quest_id,)
     ).fetchone()
 
@@ -326,19 +334,58 @@ def quest(quest_id):
 @app.route("/myquests")
 @login_required
 def myquest():
+
     user_id = session["user_id"]
 
     connection = get_db()
 
-    quests = connection.execute(
-        "SELECT * FROM quests WHERE user_id = ? ORDER BY created_at DESC",
+    # Quests created by the current user
+    created_quests = connection.execute(
+        """
+        SELECT *
+        FROM quests
+        WHERE user_id = ?
+        ORDER BY created_at DESC
+        """,
+        (user_id,)
+    ).fetchall()
+
+    # Carpool quests joined by the current user
+    joined_carpools = connection.execute(
+        """
+        SELECT quests.*
+        FROM quest_participants
+        JOIN quests
+            ON quest_participants.quest_id = quests.id
+        WHERE quest_participants.user_id = ?
+        ORDER BY quests.created_at DESC
+        """,
+        (user_id,)
+    ).fetchall()
+
+    # Expense quests joined by the current user
+    joined_expenses = connection.execute(
+        """
+        SELECT quests.*
+        FROM expense_participants
+        JOIN expenses
+            ON expense_participants.expense_id = expenses.id
+        JOIN quests
+            ON expenses.quest_id = quests.id
+        WHERE expense_participants.user_id = ?
+        ORDER BY quests.created_at DESC
+        """,
         (user_id,)
     ).fetchall()
 
     connection.close()
 
-    return render_template("myquests.html", quests=quests)
-
+    return render_template(
+        "myquests.html",
+        created_quests=created_quests,
+        joined_carpools=joined_carpools,
+        joined_expenses=joined_expenses
+    )
 
 @app.route("/quest/<int:quest_id>/join", methods=["POST"])
 @login_required
@@ -386,6 +433,10 @@ def join(quest_id):
     if existing:
         connection.close()
         return "You already joined this quest", 400
+
+    if quest["status"] != "open":
+        connection.close()
+        return "This ride is no longer open", 400
 
     # Count current participants
     participant_count = connection.execute(
@@ -461,7 +512,7 @@ def findride():
             (origin, destination, travel_date)).fetchall()
         connection.close()
 
-       return render_template("findride.html",matching_rides=matching_rides)
+        return render_template("findride.html",matching_rides=matching_rides)
     else:
         return render_template("findride.html", matching_rides=None)
 

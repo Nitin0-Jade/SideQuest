@@ -1,126 +1,259 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Quest
+{{ quest["title"] }}
 {% endblock %}
 
 {% block main %}
 
-    <h1>{{ quest["title"] }}</h1>
+<section class="sq-detail-shell">
 
-    <p>{{ quest["description"] }}</p>
+<!-- QUEST HEADER -->
+<div class="sq-detail-hero">
 
-    <p>Category: {{ quest["category"] }}</p>
+    <div class="sq-detail-topline">
 
-    <p>Status: {{ quest["status"] }}</p>
+        {% if quest["category"] == "carpool" %}
 
-    {% if carpool %}
-        <p>{{ carpool["origin"] }}</p>
-        <p>{{ carpool["destination"] }}</p>
-        <p>{{ carpool["travel_date"] }}</p>
-        <p>{{ carpool["travel_time"] }}</p>
-        <p>{{ carpool["seats"] }}</p>
-        <p>{{ carpool["estimated_fare"] }}</p>
-        <form action="/quest/{{ quest['id'] }}/join"  method="post"></form>
-        <p>Seats: {{ carpool["seats"] }}</p>
-        <p>Joined: {{ participant_count }}</p>
-        <p>Available: {{ available_seats }}</p>
-        <p>Total Fare: {{ estimated_fare }}</p>
-        {% if fare_per_person is not none %}
-            <p>Share per person: ₹{{ fare_per_person }}</p>
-        {% else %}
-            <p>Share per person: Not calculated yet</p>
+            <span class="sq-detail-label">
+                🚗 CARPOOL QUEST
+            </span>
+
+        {% elif quest["category"] == "lost_found" %}
+
+            <span class="sq-detail-label">
+                🔎 LOST &amp; FOUND QUEST
+            </span>
+
+        {% elif quest["category"] == "expense" %}
+
+            <span class="sq-detail-label">
+                💰 EXPENSE QUEST
+            </span>
+
         {% endif %}
 
         {% if quest["status"] == "open" %}
 
-            <form action="/quest/{{ quest['id'] }}/join" method="post">
-                <button type="submit">Join Ride</button>
+            <span class="sq-detail-status sq-detail-status-open">
+                ● OPEN
+            </span>
+
+        {% else %}
+
+            <span class="sq-detail-status sq-detail-status-complete">
+                ✓ COMPLETED
+            </span>
+
+        {% endif %}
+
+    </div>
+
+
+    <h1 class="sq-detail-title">
+        {{ quest["title"] }}
+    </h1>
+
+    <p class="sq-detail-description">
+        {{ quest["description"] }}
+    </p>
+
+    <div class="sq-detail-id">
+        QUEST #{{ "%04d"|format(quest["id"]) }}
+    </div>
+
+</div>
+
+
+<!-- =================================================
+     CARPOOL
+================================================= -->
+
+{% if carpool %}
+
+<div class="sq-detail-panel sq-carpool-panel">
+
+    <div class="sq-panel-header">
+
+        <div>
+            <span class="sq-panel-kicker">
+                THE RIDE
+            </span>
+
+            <h2>
+                Your route awaits.
+            </h2>
+        </div>
+
+        <div class="sq-panel-big-icon">
+            🚗
+        </div>
+
+    </div>
+
+
+    <div class="sq-route-box">
+
+        <div class="sq-location">
+
+            <span class="sq-location-label">
+                FROM
+            </span>
+
+            <strong>
+                {{ carpool["origin"] }}
+            </strong>
+
+        </div>
+
+
+        <div class="sq-route-line">
+
+            <span class="sq-route-dot"></span>
+
+            <span class="sq-route-dashes"></span>
+
+            <span class="sq-route-arrow">
+                →
+            </span>
+
+        </div>
+
+
+        <div class="sq-location">
+
+            <span class="sq-location-label">
+                TO
+            </span>
+
+            <strong>
+                {{ carpool["destination"] }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="sq-stats">
+
+        <div class="sq-stat">
+
+            <span class="sq-stat-label">
+                DATE
+            </span>
+
+            <span class="sq-stat-value">
+                {{ carpool["travel_date"] }}
+            </span>
+
+        </div>
+
+
+        <div class="sq-stat">
+
+            <span class="sq-stat-label">
+                TIME
+            </span>
+
+            <span class="sq-stat-value">
+                {{ carpool["travel_time"] }}
+            </span>
+
+        </div>
+
+
+        <div class="sq-stat">
+
+            <span class="sq-stat-label">
+                SEATS
+            </span>
+
+            <span class="sq-stat-value">
+                {{ available_seats }}/{{ total_seats }}
+            </span>
+
+        </div>
+
+
+        <div class="sq-stat">
+
+            <span class="sq-stat-label">
+                EST. FARE
+            </span>
+
+            <span class="sq-stat-value">
+                ₹{{ estimated_fare }}
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="sq-fare-box">
+
+        <div>
+
+            <span class="sq-panel-kicker">
+                FAIR SHARE
+            </span>
+
+            {% if fare_per_person is not none %}
+
+                <strong>
+                    ₹{{ "%.2f"|format(fare_per_person) }}
+                </strong>
+
+                <small>
+                    estimated per participant
+                </small>
+
+            {% else %}
+
+                <strong>
+                    —
+                </strong>
+
+                <small>
+                    waiting for participants
+                </small>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="sq-seat-display">
+
+            <span class="sq-seat-number">
+                {{ participant_count }}
+            </span>
+
+            <span class="sq-seat-label">
+                JOINED
+            </span>
+
+        </div>
+
+    </div>
+
+
+    {% if quest["status"] == "open" %}
+
+        <div class="sq-action-row">
+
+            <form
+                action="/quest/{{ quest['id'] }}/join"
+                method="post"
+            >
+                <button
+                    type="submit"
+                    class="btn btn-primary sq-big-action"
+                >
+                    Join This Ride →
+                </button>
             </form>
 
-            {% if quest["user_id"] == session["user_id"] %}
 
-                <form action="/quest/{{ quest['id'] }}/complete" method="post">
-                    <button type="submit">Mark Ride Completed</button>
-                </form>
-
-            {% endif %}
-
-        {% else %}
-            <p>Ride Completed</p>
-
-        {% endif %}
-    {% endif %}
-
-    {% if lost_item %}
-        <p>{{ lost_item["item_name"] }}</p>
-        <p>{{ lost_item["description"] }}</p>
-        <p>{{ lost_item["location"] }}</p>
-        <p>{{ lost_item["type"] }}</p>
-
-        {% if quest["status"] == "open" %}
-            {% if quest["user_id"] == session["user_id"] %}
-
-                <form action="/quest/{{ quest['id'] }}/resolve" method="post">
-                    <button type="submit">Mark as Resolved</button>
-                </form>
-            {% endif %}
-        {% else %}
-            <p>Resolved</p>
-        {% endif %}
-    {% endif %}
-
-    {% if expense %}
-
-        <div class="card mt-4">
-            <div class="card-body">
-
-                <h2>Expense Split</h2>
-
-                <p>
-                    <strong>Description:</strong>
-                    {{ expense["description"] }}
-                </p>
-
-                <p>
-                    <strong>Total Amount:</strong>
-                    ₹{{ expense["amount"] }}
-                </p>
-
-                <p>
-                    <strong>People Joined:</strong>
-                    {{ expense_participants|length }}
-                </p>
-
-                {% if expense_share %}
-                    <p>
-                        <strong>Share per person:</strong>
-                        ₹{{ "%.2f"|format(expense_share) }}
-                    </p>
-                {% endif %}
-
-                <h5>Participants</h5>
-
-                {% if expense_participants %}
-
-                    <ul>
-                        {% for participant in expense_participants %}
-                            <li>{{ participant["username"] }}</li>
-                        {% endfor %}
-                    </ul>
-
-                {% else %}
-
-                    <p>No one has joined yet.</p>
-
-                {% endif %}
-
-                {% if quest["status"] == "open" %}
-                    <form action="/expense/{{ expense['id'] }}/join" method="post">
-                        <button type="submit" class="btn btn-primary">Join Expense</button>
-                    </form>
-                {% endif %}
-            </div>
-        </div>
-    {% endif %}
-{% endblock %}
+            {% if quest["user_id"] == session["user_id"] %_]()_]()

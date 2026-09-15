@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Log In
+{% endblock %}
+
+{% block main %}
+
+<section class="sq-auth-page">
+
+<div class="sq-auth-shell">
+
+    <div class="sq-auth-mark"></div>
+
+    <div class="sq-eyebrow">
+        WELCOME BACK
+    </div>
+
+    <h1 class="sq-auth-title">
+        Log back in.
+    </h1>
+
+    <p class="sq-auth-subtitle">
+        Your campus quests are waiting.
+    </p>
+
+    <form action="/login" method="post">
+
+        <div class="mb-3">
+            <label for="username" class="form-label">
+                Username
+            </label>
+
+            <input
+                id="username"
+                name="username"
+                type="text"
+                class="form-control"
+                autocomplete="username"
+                autofocus
+                required
+                placeholder="Enter your username"
+            >
+        </div>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">
+                Password
+            </label>
+
+            <input
+                id="password"
+                name="password"
+                type="password"
+                class="form-control"
+                autocomplete="current-password"
+                required
+                placeholder="Enter your password"
+            >
+        </div>
+
+        <button
+            type="submit"
+            class="btn btn-primary w-100 mt-2"
+        >
+            Log In
+            <span class="ms-1">→</span>
+        </button>
+
+    </form>
+
+    <div class="sq-auth-switch">
+        New to SideQuest?
+        <a href="/register">Create your account →</a>
+    </div>
+
+</div>
+
+</section>
+
+{% endblock %}

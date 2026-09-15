@@ -1,31 +1,546 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Create
+    Create Quest
 {% endblock %}
 
 {% block main %}
-     <div>
-        <form action="/create" method="post">
-            <div class="mb-3">
-                <input name="title" placeholder="Title" autofocus autocomplete="off" type="text">
-                <input name="description" placeholder="Description" autocomplete="off" type="text">
-                <select name="category">
-                    <option value="carpool">Carpool / Fare Split</option>
-                    <option value="lost_found">Lost & Found</option>
-                    <option value="expense">Expense Split</option>
-                </select>
-                <fieldset>
-                    <legend>Carpool Details</legend>
-                    <input name="origin" type="text">
-                    <input name="destination" type="text">
-                    <input name="travel_date" type="date">
-                    <input name="travel_time" type="time">
-                    <input name="seats" type="number">
-                    <input name="estimated_fare" type="number">
-                </fieldset>
+
+<section class="create-page">
+
+    <div class="create-hero">
+        <div class="sq-eyebrow">
+            CREATE SOMETHING USEFUL
+        </div>
+
+        <h1 class="create-title">
+            Start a <span>quest.</span>
+        </h1>
+
+        <p class="create-subtitle">
+            Turn a small campus problem into something your community can solve.
+        </p>
+    </div>
+
+
+    <div class="create-shell">
+
+        <form action="/create" method="post" id="questForm">
+
+            <!-- BASIC INFO -->
+            <div class="create-section">
+
+
+                <div class="create-section-content">
+
+                    <div class="create-section-heading">
+                        <span class="create-section-kicker">
+                            QUEST BASICS
+                        </span>
+
+                        <h2>
+                            What are you posting?
+                        </h2>
+                    </div>
+
+                    <div class="create-grid">
+
+                        <div class="create-field create-field-full">
+
+                            <label for="title">
+                                Title
+                            </label>
+
+                            <input
+                                id="title"
+                                name="title"
+                                type="text"
+                                class="form-control"
+                                maxlength="100"
+                                required
+                                autocomplete="off"
+                                placeholder="e.g. Ride to railway station"
+                            >
+
+                        </div>
+
+
+                        <div class="create-field create-field-full">
+
+                            <label for="description">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="description"
+                                name="description"
+                                class="form-control"
+                                maxlength="1000"
+                                rows="4"
+                                required
+                                placeholder="Tell other students what they need to know..."
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
-            <button class="btn btn-primary" type="submit">Create</button>
+
+
+            <!-- CATEGORY -->
+            <div class="create-section">
+
+                
+
+                <div class="create-section-content">
+
+                    <div class="create-section-heading">
+
+                        <span class="create-section-kicker">
+                            QUEST TYPE
+                        </span>
+
+                        <h2>
+                            Pick a category.
+                        </h2>
+
+                    </div>
+
+
+                    <div class="quest-type-grid">
+
+                        <button
+                            type="button"
+                            class="quest-type active"
+                            data-category="carpool"
+                        >
+                            <span class="quest-type-icon">🚗</span>
+
+                            <span>
+                                <strong>Carpool</strong>
+                                <small>Share a ride & split fare</small>
+                            </span>
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="quest-type"
+                            data-category="lost_found"
+                        >
+                            <span class="quest-type-icon">🔎</span>
+
+                            <span>
+                                <strong>Lost & Found</strong>
+                                <small>Help recover an item</small>
+                            </span>
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="quest-type"
+                            data-category="expense"
+                        >
+                            <span class="quest-type-icon">💰</span>
+
+                            <span>
+                                <strong>Expense Split</strong>
+                                <small>Split something fairly</small>
+                            </span>
+                        </button>
+
+                    </div>
+
+
+                    <input
+                        type="hidden"
+                        name="category"
+                        id="category"
+                        value="carpool"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- CARPOOL -->
+            <div
+                class="create-section category-fields"
+                id="carpoolFields"
+            >
+
+                
+
+                <div class="create-section-content">
+
+                    <div class="create-section-heading">
+
+                        <span class="create-section-kicker">
+                            CARPOOL
+                        </span>
+
+                        <h2>
+                            Build the ride.
+                        </h2>
+
+                    </div>
+
+
+                    <div class="create-grid">
+
+                        <div class="create-field">
+
+                            <label for="origin">
+                                From
+                            </label>
+
+                            <input
+                                id="origin"
+                                name="origin"
+                                type="text"
+                                class="form-control"
+                                placeholder="Hostel"
+                            >
+
+                        </div>
+
+
+                        <div class="create-field">
+
+                            <label for="destination">
+                                To
+                            </label>
+
+                            <input
+                                id="destination"
+                                name="destination"
+                                type="text"
+                                class="form-control"
+                                placeholder="Railway Station"
+                            >
+
+                        </div>
+
+
+                        <div class="create-field">
+
+                            <label for="travel_date">
+                                Date
+                            </label>
+
+                            <input
+                                id="travel_date"
+                                name="travel_date"
+                                type="date"
+                                class="form-control"
+                            >
+
+                        </div>
+
+
+                        <div class="create-field">
+
+                            <label for="travel_time">
+                                Time
+                            </label>
+
+                            <input
+                                id="travel_time"
+                                name="travel_time"
+                                type="time"
+                                class="form-control"
+                            >
+
+                        </div>
+
+
+                        <div class="create-field">
+
+                            <label for="seats">
+                                Seats
+                            </label>
+
+                            <input
+                                id="seats"
+                                name="seats"
+                                type="number"
+                                min="1"
+                                class="form-control"
+                                placeholder="2"
+                            >
+
+                        </div>
+
+
+                        <div class="create-field">
+
+                            <label for="estimated_fare">
+                                Estimated fare ₹
+                            </label>
+
+                            <input
+                                id="estimated_fare"
+                                name="estimated_fare"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                class="form-control"
+                                placeholder="500"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOST FOUND -->
+            <div
+                class="create-section category-fields"
+                id="lostFields"
+                style="display:none;"
+            >
+
+                <div class="create-section-number">
+                    03
+                </div>
+
+                <div class="create-section-content">
+
+                    <div class="create-section-heading">
+
+                        <span class="create-section-kicker">
+                            LOST & FOUND
+                        </span>
+
+                        <h2>
+                            Tell people what happened.
+                        </h2>
+
+                    </div>
+
+
+                    <div class="create-grid">
+
+                        <div class="create-field create-field-full">
+
+                            <label for="item_name">
+                                Item name
+                            </label>
+
+                            <input
+                                id="item_name"
+                                name="item_name"
+                                type="text"
+                                class="form-control"
+                                placeholder="e.g. Black wallet"
+                            >
+
+                        </div>
+
+
+                        <div class="create-field create-field-full">
+
+                            <label for="location">
+                                Location
+                            </label>
+
+                            <input
+                                id="location"
+                                name="location"
+                                type="text"
+                                class="form-control"
+                                placeholder="e.g. Library entrance"
+                            >
+
+                        </div>
+
+
+                        <div class="create-field create-field-full">
+
+                            <label for="type">
+                                Type
+                            </label>
+
+                            <select
+                                id="type"
+                                name="type"
+                                class="form-select"
+                            >
+                                <option value="lost">Lost</option>
+                                <option value="found">Found</option>
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- EXPENSE -->
+            <div
+                class="create-section category-fields"
+                id="expenseFields"
+                style="display:none;"
+            >
+
+                <div class="create-section-number">
+                    03
+                </div>
+
+                <div class="create-section-content">
+
+                    <div class="create-section-heading">
+
+                        <span class="create-section-kicker">
+                            EXPENSE SPLIT
+                        </span>
+
+                        <h2>
+                            Put the numbers on the table.
+                        </h2>
+
+                    </div>
+
+
+                    <div class="create-grid">
+
+                        <div class="create-field create-field-full">
+
+                            <label for="amount">
+                                Total amount ₹
+                            </label>
+
+                            <input
+                                id="amount"
+                                name="amount"
+                                type="number"
+                                min="0.01"
+                                step="0.01"
+                                class="form-control"
+                                placeholder="600"
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <p class="create-helper">
+                        Everyone who joins will automatically get an equal share.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+            <div class="create-submit">
+
+                <div>
+                    <span class="create-submit-small">
+                        READY?
+                    </span>
+
+                    <strong>
+                        Put it on the board.
+                    </strong>
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary create-submit-button"
+                >
+                    Create Quest →
+                </button>
+
+            </div>
+
         </form>
-     </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+    const typeButtons =
+        document.querySelectorAll(".quest-type");
+
+    const categoryInput =
+        document.getElementById("category");
+
+    const carpoolFields =
+        document.getElementById("carpoolFields");
+
+    const lostFields =
+        document.getElementById("lostFields");
+
+    const expenseFields =
+        document.getElementById("expenseFields");
+
+
+    function setCategory(category) {
+
+        categoryInput.value = category;
+
+
+        typeButtons.forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.category === category
+            );
+
+        });
+
+
+        carpoolFields.style.display =
+            category === "carpool" ? "" : "none";
+
+        lostFields.style.display =
+            category === "lost_found" ? "" : "none";
+
+        expenseFields.style.display =
+            category === "expense" ? "" : "none";
+
+    }
+
+
+    typeButtons.forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                setCategory(
+                    this.dataset.category
+                );
+
+            }
+        );
+
+    });
+
+
+    setCategory("carpool");
+
+</script>
+
 {% endblock %}

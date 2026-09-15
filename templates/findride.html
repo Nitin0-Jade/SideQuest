@@ -1,54 +1,131 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Find Ride
+Find a Ride
 {% endblock %}
 
 {% block main %}
-    <h1>Find a Ride</h1>
 
-    <form action="/findride" method="post">
-        <input name="origin" placeholder="Origin" type="text" required>
-        <input name="destination" placeholder="Destination" type="text" required>
-        <input name="travel_date" type="date" required>
-        <button class="btn btn-primary" type="submit">Find Rides</button>
+<section class="sq-ride-finder">
+
+<!-- HERO -->
+<div class="sq-ride-finder-hero">
+
+    <div class="sq-eyebrow">
+        MOBILITY // FIND YOUR ROUTE
+    </div>
+
+    <h1 class="sq-ride-finder-title">
+        Find your
+        <span>ride.</span>
+    </h1>
+
+    <p class="sq-ride-finder-subtitle">
+        Enter your route and travel date to find students already
+        heading the same way.
+    </p>
+
+</div>
+
+
+<!-- SEARCH PANEL -->
+<div class="sq-ride-search-panel">
+
+    <div class="sq-ride-search-heading">
+
+        <span class="sq-panel-kicker">
+            ROUTE SEARCH
+        </span>
+
+        <h2>
+            Where are you going?
+        </h2>
+
+    </div>
+
+
+    <form
+        action="/findride"
+        method="post"
+        class="sq-ride-search-form"
+    >
+
+        <div class="sq-ride-search-field">
+
+            <label for="origin">
+                FROM
+            </label>
+
+            <div class="sq-input-wrap">
+                <span class="sq-input-icon">●</span>
+
+                <input
+                    id="origin"
+                    name="origin"
+                    type="text"
+                    placeholder="e.g. Hostel"
+                    required
+                >
+            </div>
+
+        </div>
+
+
+        <div class="sq-search-arrow">
+            →
+        </div>
+
+
+        <div class="sq-ride-search-field">
+
+            <label for="destination">
+                TO
+            </label>
+
+            <div class="sq-input-wrap">
+                <span class="sq-input-icon">◆</span>
+
+                <input
+                    id="destination"
+                    name="destination"
+                    type="text"
+                    placeholder="e.g. Railway Station"
+                    required
+                >
+            </div>
+
+        </div>
+
+
+        <div class="sq-ride-search-field sq-ride-date-field">
+
+            <label for="travel_date">
+                DATE
+            </label>
+
+            <input
+                id="travel_date"
+                name="travel_date"
+                type="date"
+                required
+            >
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="btn btn-primary sq-find-button"
+        >
+            Find Rides →
+        </button>
+
     </form>
 
-    {% if matching_rides is not none %}
-        <h2 class="mt-4">Matching Rides</h2>
-        {% if matching_rides %}
-            {% for ride in matching_rides %}
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h3>{{ ride["title"] }}</h3>
-                            <p>{{ ride["description"] }}</p>
-                            <p>
-                                {{ ride["origin"] }}
-                                {{ ride["destination"] }}
-                            </p>
+</div>
 
-                            <p>
-                                Date: {{ ride["travel_date"] }}
-                            </p>
 
-                            <p>
-                                Time: {{ ride["travel_time"] }}
-                            </p>
+{% if matching_rides is not none %}
 
-                            <p>
-                                Seats: {{ ride["seats"] }}
-                            </p>
-
-                            <p>
-                                Estimated Fare: ₹{{ ride["estimated_fare"] }}
-                            </p>
-
-                            <a href="/quest/{{ ride['quest_id'] }}" class="btn btn-secondary">View Ride</a>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No matching rides found.</p>
-        {% endif %}
-    {% endif %}
-{% endblock %}
+    <!-- RESULTS -->
+    <section cla

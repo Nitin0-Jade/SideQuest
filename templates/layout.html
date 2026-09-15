@@ -1,107 +1,291 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1, width=device-width">
 
-    <!-- Bootstrap 5.3 -->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <meta
+        name="theme-color"
+        content="#090a0c"
+    >
+
+    <meta
+        name="description"
+        content="SideQuest — solve everyday campus problems together."
+    >
+
+    <title>
+        SideQuest{% if self.title() %} · {% block title %}{% endblock %}{% endif %}
+    </title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
         rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-        crossorigin="anonymous">
+        crossorigin="anonymous"
+    >
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
+    <!-- SideQuest -->
+    <link
+        href="{{ url_for('static', filename='styles.css') }}"
+        rel="stylesheet"
+    >
 
-    <link href="/static/styles.css" rel="stylesheet">
-
-    <title>SideQuest: {% block title %}{% endblock %}</title>
-
+    {% block head %}{% endblock %}
+</div>
 </head>
 
 <body>
 
-    <nav class="bg-light border navbar navbar-expand-md navbar-light">
-        <div class="container-fluid">
+    <!-- Ambient glow -->
+    <div class="sq-ambient sq-ambient-a"></div>
+    <div class="sq-ambient sq-ambient-b"></div>
 
-            <a class="navbar-brand fw-bold" href="/">
-                SideQuest
+    <!-- Grid overlay -->
+    <div class="sq-grid-bg"></div>
+
+    <!-- NAVBAR -->
+    <header class="sq-topbar">
+
+        <div class="sq-topbar-inner">
+
+            <a href="/" class="sq-logo">
+
+                <div class="sq-logo-box">
+                    S
+                </div>
+
+                <div class="sq-logo-copy">
+                    <div class="sq-logo-name">
+                        SIDEQUEST
+                    </div>
+
+                    <div class="sq-logo-tag">
+                        CAMPUS QUEST BOARD
+                    </div>
+                </div>
+
             </a>
 
-            <button
-                aria-controls="navbar"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-                class="navbar-toggler"
-                data-bs-target="#navbar"
-                data-bs-toggle="collapse"
-                type="button">
 
-                <span class="navbar-toggler-icon"></span>
+            {% if session.get("user_id") %}
 
-            </button>
+                <button
+                    class="sq-mobile-toggle"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#sqNav"
+                    aria-controls="sqNav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
 
-            <div class="collapse navbar-collapse" id="navbar">
+                <nav
+                    class="collapse sq-nav"
+                    id="sqNav"
+                >
 
-                {% if session.get("user_id") %}
+                    <div class="sq-nav-main">
 
-                    <ul class="navbar-nav me-auto mt-2">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/">Home</a>
-                        </li>
+                        <a
+                            href="/"
+                            class="sq-nav-item"
+                        >
+                            Home
+                        </a>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/create">Post a Quest</a>
-                        </li>
+                        <a
+                            href="/create"
+                            class="sq-nav-item sq-nav-create"
+                        >
+                            <span>＋</span>
+                            Create Quest
+                        </a>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/myquests">My Quests</a>
-                        </li>
-                    </ul>
+                        <a
+                            href="/findride"
+                            class="sq-nav-item"
+                        >
+                            Find Ride
+                        </a>
 
-                    <ul class="navbar-nav ms-auto mt-2">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout">Log Out</a>
-                        </li>
-                    </ul>
+                        <a
+                            href="/myquests"
+                            class="sq-nav-item"
+                        >
+                            My Activity
+                        </a>
 
-                {% else %}
+                    </div>
 
-                    <ul class="navbar-nav ms-auto mt-2">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/register">Register</a>
-                        </li>
+                    <div class="sq-nav-right">
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login">Log In</a>
-                        </li>
-                    </ul>
+                        <div class="sq-online">
+                            <span class="sq-online-dot"></span>
+                            ONLINE
+                        </div>
 
-                {% endif %}
+                        <a
+                            href="/logout"
+                            class="sq-nav-logout"
+                        >
+                            Logout
+                            <span>↗</span>
+                        </a>
+
+                    </div>
+
+                </nav>
+
+            {% else %}
+
+                <nav class="sq-guest-nav">
+
+                    <a
+                        href="/register"
+                        class="sq-nav-item"
+                    >
+                        Register
+                    </a>
+
+                    <a
+                        href="/login"
+                        class="sq-nav-item sq-nav-create"
+                    >
+                        Log In
+                    </a>
+
+                </nav>
+
+            {% endif %}
+
+        </div>
+
+    </header>
+
+
+    <!-- FLASH -->
+    {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+
+            <div class="sq-alert-wrap">
+
+                {% for message in messages %}
+
+                    <div class="sq-alert">
+
+                        <div class="sq-alert-symbol">
+                            !
+                        </div>
+
+                        <span>
+                            {{ message }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
 
             </div>
-        </div>
-    </nav>
 
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <header>
-                <div class="alert alert-primary mb-0 text-center" role="alert">
-                    {{ messages | join(" ") }}
-                </div>
-            </header>
         {% endif %}
+
     {% endwith %}
 
-    <main class="container py-5 text-center">
-        {% block main %}{% endblock %}
+
+    <!-- MAIN -->
+    <main class="sq-main">
+
+        <div class="sq-container">
+
+            {% block main %}{% endblock %}
+
+        </div>
+
     </main>
+
+
+    <!-- FOOTER -->
+    <footer class="sq-footer">
+
+        <div class="sq-footer-inner">
+
+            <div class="sq-footer-left">
+
+                <span class="sq-footer-brand">
+                    SIDEQUEST
+                </span>
+
+                <span class="sq-footer-line">
+                    Small campus problems. One place.
+                </span>
+
+            </div>
+
+            <div class="sq-footer-right">
+
+                <span>
+                    YOROZUYA
+                </span>
+
+                <span class="sq-footer-dot">
+                    •
+                </span>
+
+                <span>
+                    WEB DEVELOPMENT
+                </span>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <div class="sq-mascot" id="sqMascot" aria-hidden="true">
+        <div class="sq-mascot-ears">
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="sq-mascot-face">
+            <span class="sq-eye left"></span>
+            <span class="sq-eye right"></span>
+            <span class="sq-nose"></span>
+        </div>
+
+        <div class="sq-mascot-tail"></div>
+    </div>
+
+
+    <!-- Bootstrap -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"
+    ></script>
+
+    {% block scripts %}{% endblock %}
 
 </body>
 
