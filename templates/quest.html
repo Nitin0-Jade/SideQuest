@@ -57,6 +57,17 @@
         <p>{{ lost_item["description"] }}</p>
         <p>{{ lost_item["location"] }}</p>
         <p>{{ lost_item["type"] }}</p>
+
+        {% if quest["status"] == "open" %}
+            {% if quest["user_id"] == session["user_id"] %}
+
+                <form action="/quest/{{ quest['id'] }}/resolve" method="post">
+                    <button type="submit">Mark as Resolved</button>
+                </form>
+            {% endif %}
+        {% else %}
+            <p>Resolved</p>
+        {% endif %}
     {% endif %}
         
 {% endblock %}

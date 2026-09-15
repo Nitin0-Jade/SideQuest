@@ -221,6 +221,10 @@ def create():
             quest_id=new_quest.lastrowid
             
             lost_items_fields=connection.execute("INSERT INTO lost_items(quest_id,item_name,description,location,type) VALUES(?,?,?,?,?)",(quest_id,item_name,description,location,Type))
+        
+        
+
+
 
         connection.commit()
         connection.close()
@@ -260,10 +264,10 @@ def quest(quest_id):
 
     participant_count = participant_count["participant_count"]
 
-   estimated_fare = None
-   fare_per_person = None
-   total_seats = 0
-   available_seats = 0
+    estimated_fare = None
+    fare_per_person = None
+    total_seats = 0
+    available_seats = 0
 
     if carpool:
         estimated_fare = carpool["estimated_fare"]
@@ -476,4 +480,40 @@ def complete(quest_id):
 
     return redirect(f"/quest/{quest_id}")
 
-    
+
+@app.route("/quest/[int:quest_id](int:quest_id)/resolve", methods=["POST"])
+@login_required
+def resolve(quest_id):
+    user_id = session["user_id"]
+
+    connection = get_db()
+
+    quest = connection.execute("SELECT * FROM quests WHERE id = ?",(quest_id,)).fetchone()
+
+    if quest is None:
+        connection.close()
+        return "Quest not found", 404
+
+    if quest["category"] != "lost_found":
+        connection.close()
+        return "This is not a Lost & Found quest", 400
+
+    if quest["user_id"] != user_id:
+        connection.close()
+        return "You cannot resolve this quest", 403
+
+    if quest["status"] != "open":
+        connection.close()
+        return "Quest is already resolved", 400
+
+    connection.execute("UPDATE quests SET status = 'completed' WHERE id = ?",(quest_id,))
+
+    connection.commit()
+    connection.close()
+
+    return redirect(f"/quest/{quest_id}")
+
+
+
+
+
