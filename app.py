@@ -53,7 +53,7 @@ def register():
         connection.execute("INSERT INTO users (username, hash) VALUES (?, ?)",(username, hashed))
         connection.commit()
         new_user = connection.execute("SELECT id FROM users WHERE username = ?",(username,)).fetchone()
-        session["user_id"] = new_user[0]["id"]
+        session["user_id"] = new_user["id"]
         connection.close()
 
         return redirect("/")
@@ -196,7 +196,32 @@ def create():
             quest_id=new_quest.lastrowid
             
             carpool_fields=connection.execute("INSERT INTO carpools(quest_id,origin,destination,travel_date,travel_time,seats,estimated_fare) VALUES(?,?,?,?,?,?,?)",(quest_id,origin,destination,travel_date,travel_time,seats,estimated_fare))
-         
+        
+        if category=="lost_found":
+            item_name=request.form.get("item_name")
+            location=request.form.get("location")
+            Type=request.form.get("type")
+
+            if not item_name:
+                return "Please enter a valid name"
+
+            if not description:
+                return "Please enter a valid description"
+
+            if not location:
+                return "Please enter a valid location"
+
+            if not Type:
+                return "Please enter a valid Type"
+
+            user_id = session["user_id"]
+
+            new_quest=connection.execute("INSERT INTO quests(title,description,category,user_id) VALUES(?,?,?,?) ",(title,description,category,user_id))
+        
+            quest_id=new_quest.lastrowid
+            
+            lost_items_fields=connection.execute("INSERT INTO lost_items(quest_id,item_name,description,location,type) VALUES(?,?,?,?,?)",(quest_id,item_name,description,location,Type))
+
         connection.commit()
         connection.close()
 
@@ -213,32 +238,41 @@ def quest(quest_id):
 
     quest = connection.execute("SELECT * FROM quests WHERE id = ?",(quest_id,)).fetchone()
     carpool = connection.execute(
-        """
+        "
         SELECT *
         FROM carpools
         JOIN quests ON carpools.quest_id = quests.id
         WHERE quests.id = ?
-        """,
+        ",
         (quest_id,)
     ).fetchone()
 
+    lost_item=connection.execute("SELECT * FROM lost_items WHERE quest_id = ?",(quest_id,)).fetchone()
+
     participant_count = connection.execute(
-        """
+        "
         SELECT COUNT(*) AS participant_count
         FROM quest_participants
         WHERE quest_id = ?
-        """,
+        ",
         (quest_id,)
     ).fetchone()
 
     participant_count = participant_count["participant_count"]
-    estimated_fare=carpool["estimated_fare"]
-    fare_per_person=None
-    if participant_count>0:
-        fare_per_person = estimated_fare / participant_count
 
-    total_seats = carpool["seats"] if carpool else 0
-    available_seats = total_seats - participant_count
+   estimated_fare = None
+   fare_per_person = None
+   total_seats = 0
+   available_seats = 0
+
+    if carpool:
+        estimated_fare = carpool["estimated_fare"]
+
+        if participant_count > 0:
+            fare_per_person = estimated_fare / participant_count
+
+        total_seats = carpool["seats"]
+        available_seats = total_seats - participant_count
 
     connection.close()
 
@@ -246,6 +280,7 @@ def quest(quest_id):
         "quest.html",
         quest=quest,
         carpool=carpool,
+        lost_item=lost_item,
         participant_count=participant_count,
         total_seats=total_seats,
         available_seats=available_seats,
@@ -348,3 +383,97 @@ def join(quest_id):
     connection.close()
 
     return redirect(f"/quest/{quest_id}")
+
+@app.route("/findride", methods=["GET", "POST"])
+@login_required
+def findride():
+
+    if request.method == "POST":
+        origin = request.form.get("origin")
+        destination = request.form.get("destination")
+        travel_date = request.form.get("travel_date")
+
+        if not origin:
+            return "Please enter a valid origin", 400
+
+        if not destination:
+            return "Please enter a valid destination", 400
+
+        if not travel_date:
+            return "Please enter a valid date", 400
+
+        connection = get_db()
+
+        matching_rides = connection.execute("SELECT
+            quests.id AS quest_id,
+            quests.title,
+            quests.description,
+            quests.category,
+            quests.status,
+            carpools.origin,
+            carpools.destination,
+            carpools.travel_date,
+            carpools.travel_time,
+            carpools.seats,
+            carpools.estimated_fare
+            FROM carpools
+            JOIN quests
+            ON carpools.quest_id = quests.id
+            WHERE carpools.origin = ?
+            AND carpools.destination = ?
+            AND carpools.travel_date = ?
+            ",
+            (origin, destination, travel_date)).fetchall()
+        connection.close()
+
+       return render_template("findride.html",matching_rides=matching_rides)
+    else:
+        return render_template("findride.html", matching_rides=None)
+
+@app.route("/quest/<int:quest_id>/complete", methods=["POST"])
+@login_required
+def complete(quest_id):
+
+    user_id = session["user_id"]
+
+    connection = get_db()
+
+    quest = connection.execute(
+        "SELECT * FROM quests WHERE id = ?",
+        (quest_id,)
+    ).fetchone()
+
+    if quest is None:
+        connection.close()
+        return "Quest not found", 404
+
+    # Only the creator can complete the quest
+    if quest["user_id"] != user_id:
+        connection.close()
+        return "You cannot complete this quest", 403
+
+    # Only carpool quests use this completion flow
+    if quest["category"] != "carpool":
+        connection.close()
+        return "This quest is not a carpool", 400
+
+    # Don't complete an already completed quest
+    if quest["status"] == "completed":
+        connection.close()
+        return "Quest is already completed", 400
+
+    if quest["status"] != "open":
+        connection.close()
+        return "This ride is no longer open", 400
+
+    connection.execute(
+        "UPDATE quests SET status = 'completed' WHERE id = ?",
+        (quest_id,)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect(f"/quest/{quest_id}")
+
+    

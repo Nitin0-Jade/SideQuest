@@ -21,9 +21,7 @@
         <p>{{ carpool["travel_time"] }}</p>
         <p>{{ carpool["seats"] }}</p>
         <p>{{ carpool["estimated_fare"] }}</p>
-        <form action="/quest/{{ quest['id'] }}/join"  method="post">
-                <button type="submit">Join Ride</button>
-        </form>
+        <form action="/quest/{{ quest['id'] }}/join"  method="post"></form>
         <p>Seats: {{ carpool["seats"] }}</p>
         <p>Joined: {{ participant_count }}</p>
         <p>Available: {{ available_seats }}</p>
@@ -33,6 +31,32 @@
         {% else %}
             <p>Share per person: Not calculated yet</p>
         {% endif %}
+
+        {% if quest["status"] == "open" %}
+
+            <form action="/quest/{{ quest['id'] }}/join" method="post">
+                <button type="submit">Join Ride</button>
+            </form>
+
+            {% if quest["user_id"] == session["user_id"] %}
+
+                <form action="/quest/{{ quest['id'] }}/complete" method="post">
+                    <button type="submit">Mark Ride Completed</button>
+                </form>
+
+            {% endif %}
+
+        {% else %}
+            <p>Ride Completed</p>
+
+        {% endif %}
     {% endif %}
 
+    {% if lost_item %}
+        <p>{{ lost_item["item_name"] }}</p>
+        <p>{{ lost_item["description"] }}</p>
+        <p>{{ lost_item["location"] }}</p>
+        <p>{{ lost_item["type"] }}</p>
+    {% endif %}
+        
 {% endblock %}

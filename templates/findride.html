@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Find Ride
+{% endblock %}
+
+{% block main %}
+    <h1>Find a Ride</h1>
+
+    <form action="/findride" method="post">
+        <input name="origin" placeholder="Origin" type="text" required>
+        <input name="destination" placeholder="Destination" type="text" required>
+        <input name="travel_date" type="date" required>
+        <button class="btn btn-primary" type="submit">Find Rides</button>
+    </form>
+
+    {% if matching_rides is not none %}
+        <h2 class="mt-4">Matching Rides</h2>
+        {% if matching_rides %}
+            {% for ride in matching_rides %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h3>{{ ride["title"] }}</h3>
+                            <p>{{ ride["description"] }}</p>
+                            <p>
+                                {{ ride["origin"] }}
+                                {{ ride["destination"] }}
+                            </p>
+
+                            <p>
+                                Date: {{ ride["travel_date"] }}
+                            </p>
+
+                            <p>
+                                Time: {{ ride["travel_time"] }}
+                            </p>
+
+                            <p>
+                                Seats: {{ ride["seats"] }}
+                            </p>
+
+                            <p>
+                                Estimated Fare: ₹{{ ride["estimated_fare"] }}
+                            </p>
+
+                            <a href="/quest/{{ ride['quest_id'] }}" class="btn btn-secondary">View Ride</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No matching rides found.</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}
