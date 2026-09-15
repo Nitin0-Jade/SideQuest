@@ -8,356 +8,405 @@ Find a Ride
 
 <section class="sq-ride-finder">
 
-<!-- HERO -->
-<div class="sq-ride-finder-hero">
+    <!-- HERO -->
+    <div class="sq-ride-finder-hero">
 
-    <div class="sq-eyebrow">
-        MOBILITY // FIND YOUR ROUTE
-    </div>
+        <div class="sq-eyebrow">
+            MOBILITY // FIND YOUR ROUTE
+        </div>
 
-    <h1 class="sq-ride-finder-title">
-        Find your
-        <span>ride.</span>
-    </h1>
+        <h1 class="sq-ride-finder-title">
+            Find your
+            <span>ride.</span>
+        </h1>
 
-    <p class="sq-ride-finder-subtitle">
-        Enter your route and travel date to find students already
-        heading the same way.
-    </p>
-
-</div>
-
-
-<!-- SEARCH PANEL -->
-<div class="sq-ride-search-panel">
-
-    <div class="sq-ride-search-heading">
-
-        <span class="sq-panel-kicker">
-            ROUTE SEARCH
-        </span>
-
-        <h2>
-            Where are you going?
-        </h2>
+        <p class="sq-ride-finder-subtitle">
+            Enter your route and travel date to find students already
+            heading the same way.
+        </p>
 
     </div>
 
 
-    <form
-        action="/findride"
-        method="post"
-        class="sq-ride-search-form"
-    >
+    <!-- SEARCH PANEL -->
+    <div class="sq-ride-search-panel">
 
-        <div class="sq-ride-search-field">
-
-            <label for="origin">
-                FROM
-            </label>
-
-            <div class="sq-input-wrap">
-                <span class="sq-input-icon">●</span>
-
-                <input
-                    id="origin"
-                    name="origin"
-                    type="text"
-                    placeholder="e.g. Hostel"
-                    required
-                >
-            </div>
-
-        </div>
-
-
-        <div class="sq-search-arrow">
-            →
-        </div>
-
-
-        <div class="sq-ride-search-field">
-
-            <label for="destination">
-                TO
-            </label>
-
-            <div class="sq-input-wrap">
-                <span class="sq-input-icon">◆</span>
-
-                <input
-                    id="destination"
-                    name="destination"
-                    type="text"
-                    placeholder="e.g. Railway Station"
-                    required
-                >
-            </div>
-
-        </div>
-
-
-        <div class="sq-ride-search-field sq-ride-date-field">
-
-            <label for="travel_date">
-                DATE
-            </label>
-
-            <input
-                id="travel_date"
-                name="travel_date"
-                type="date"
-                required
-            >
-
-        </div>
-
-
-        <button
-            type="submit"
-            class="btn btn-primary sq-find-button"
-        >
-            Find Rides →
-        </button>
-
-    </form>
-
-</div>
-
-
-{% if matching_rides is not none %}
-
-    <!-- RESULTS -->
-    <section class="sq-ride-results">
-
-        <div class="sq-section-header">
-
-            <div>
-
-                <div class="sq-section-kicker">
-                    SEARCH RESULTS
-                </div>
-
-                <h2 class="sq-section-title">
-                    {% if matching_rides %}
-                        Rides heading your way.
-                    {% else %}
-                        Nothing matched.
-                    {% endif %}
-                </h2>
-
-            </div>
-
-            <span class="sq-ride-result-count">
-                {{ matching_rides|length }}
-                MATCHES
-            </span>
-
-        </div>
-
-
-        {% if matching_rides %}
-
-            <div class="sq-ride-list">
-
-                {% for ride in matching_rides %}
-
-                    <article class="sq-ride-result-card">
-
-                        <div class="sq-ride-result-main">
-
-                            <div class="sq-ride-result-top">
-
-                                <span class="sq-category sq-category-carpool">
-                                    🚗 CARPOOL
-                                </span>
-
-                                {% if ride["status"] == "open" %}
-
-                                    <span class="sq-status sq-status-open">
-                                        OPEN
-                                    </span>
-
-                                {% else %}
-
-                                    <span class="sq-status sq-status-complete">
-                                        COMPLETED
-                                    </span>
-
-                                {% endif %}
-
-                            </div>
-
-
-                            <h3>
-                                {{ ride["title"] }}
-                            </h3>
-
-
-                            <p class="sq-ride-description">
-                                {{ ride["description"] }}
-                            </p>
-
-
-                            <div class="sq-route-result">
-
-                                <div>
-                                    <span>FROM</span>
-                                    <strong>
-                                        {{ ride["origin"] }}
-                                    </strong>
-                                </div>
-
-                                <div class="sq-route-result-arrow">
-                                    →
-                                </div>
-
-                                <div>
-                                    <span>TO</span>
-                                    <strong>
-                                        {{ ride["destination"] }}
-                                    </strong>
-                                </div>
-
-                            </div>
-
-
-                            <div class="sq-ride-result-meta">
-
-                                <span>
-                                    DATE
-                                    <strong>
-                                        {{ ride["travel_date"] }}
-                                    </strong>
-                                </span>
-
-                                <span>
-                                    TIME
-                                    <strong>
-                                        {{ ride["travel_time"] }}
-                                    </strong>
-                                </span>
-
-                                <span>
-                                    SEATS
-                                    <strong>
-                                        {{ ride["seats"] }}
-                                    </strong>
-                                </span>
-
-                                <span>
-                                    EST. FARE
-                                    <strong>
-                                        ₹{{ ride["estimated_fare"] }}
-                                    </strong>
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="sq-ride-result-side">
-
-                            <div class="sq-ride-result-icon">
-                                🚗
-                            </div>
-
-                            <a
-                                href="/quest/{{ ride['quest_id'] }}"
-                                class="btn btn-secondary"
-                            >
-                                View Ride →
-                            </a>
-
-                        </div>
-
-                    </article>
-
-                {% endfor %}
-
-            </div>
-
-        {% else %}
-
-            <div class="sq-ride-empty">
-
-                <div class="sq-ride-empty-icon">
-                    🚗
-                </div>
-
-                <h3>
-                    No matching rides.
-                </h3>
-
-                <p>
-                    Try another route or date, or post your own ride.
-                </p>
-
-                <a
-                    href="/create"
-                    class="btn btn-primary"
-                >
-                    Offer a Ride →
-                </a>
-
-            </div>
-
-        {% endif %}
-
-    </section>
-
-{% else %}
-
-    <!-- EMPTY SEARCH STATE -->
-    <section class="sq-ride-preview">
-
-        <div class="sq-ride-preview-copy">
+        <div class="sq-ride-search-heading">
 
             <span class="sq-panel-kicker">
-                HOW IT WORKS
+                ROUTE SEARCH
             </span>
 
             <h2>
-                Same route?
-                <span>Share it.</span>
+                Where are you going?
             </h2>
 
-            <p>
-                SideQuest checks the campus board for rides matching
-                your origin, destination and travel date.
-            </p>
-
         </div>
 
 
-        <div class="sq-ride-steps">
+        <form
+            action="/findride"
+            method="post"
+            class="sq-ride-search-form"
+        >
 
-            <div class="sq-ride-step">
-                <span>01</span>
-                <strong>Choose your route</strong>
+            <div class="sq-ride-search-field">
+
+                <label for="origin">
+                    FROM
+                </label>
+
+                <div class="sq-input-wrap">
+
+                    <span class="sq-input-icon">
+                        ●
+                    </span>
+
+                    <input
+                        id="origin"
+                        name="origin"
+                        type="text"
+                        placeholder="e.g. Hostel"
+                        autocomplete="off"
+                        required
+                    >
+
+                </div>
+
             </div>
 
-            <div class="sq-ride-step-line"></div>
 
-            <div class="sq-ride-step">
-                <span>02</span>
-                <strong>Pick your date</strong>
+            <div class="sq-search-arrow" aria-hidden="true">
+                →
             </div>
 
-            <div class="sq-ride-step-line"></div>
 
-            <div class="sq-ride-step">
-                <span>03</span>
-                <strong>Join the ride</strong>
+            <div class="sq-ride-search-field">
+
+                <label for="destination">
+                    TO
+                </label>
+
+                <div class="sq-input-wrap">
+
+                    <span class="sq-input-icon">
+                        ◆
+                    </span>
+
+                    <input
+                        id="destination"
+                        name="destination"
+                        type="text"
+                        placeholder="e.g. Railway Station"
+                        autocomplete="off"
+                        required
+                    >
+
+                </div>
+
             </div>
 
-        </div>
 
-    </section>
+            <div class="sq-ride-search-field sq-ride-date-field">
 
-{% endif %}
+                <label for="travel_date">
+                    DATE
+                </label>
 
+                <input
+                    id="travel_date"
+                    name="travel_date"
+                    type="date"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary sq-find-button"
+            >
+                Find Rides →
+            </button>
+
+        </form>
+
+    </div>
+
+
+    {% if matching_rides is not none %}
+
+        <!-- RESULTS -->
+        <section class="sq-ride-results">
+
+            <div class="sq-section-header">
+
+                <div>
+
+                    <div class="sq-section-kicker">
+                        SEARCH RESULTS
+                    </div>
+
+                    <h2 class="sq-section-title">
+
+                        {% if matching_rides %}
+                            Rides heading your way.
+                        {% else %}
+                            Nothing matched.
+                        {% endif %}
+
+                    </h2>
+
+                </div>
+
+                <span class="sq-ride-result-count">
+                    {{ matching_rides|length }}
+                    MATCHES
+                </span>
+
+            </div>
+
+
+            {% if matching_rides %}
+
+                <div class="sq-ride-list">
+
+                    {% for ride in matching_rides %}
+
+                        <article class="sq-ride-result-card">
+
+                            <div class="sq-ride-result-main">
+
+                                <div class="sq-ride-result-top">
+
+                                    <span class="sq-category sq-category-carpool">
+                                        🚗 CARPOOL
+                                    </span>
+
+                                    {% if ride["status"] == "open" %}
+
+                                        <span class="sq-status sq-status-open">
+                                            OPEN
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="sq-status sq-status-complete">
+                                            COMPLETED
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <h3>
+                                    {{ ride["title"] }}
+                                </h3>
+
+
+                                <p class="sq-ride-description">
+                                    {{ ride["description"] }}
+                                </p>
+
+
+                                <div class="sq-route-result">
+
+                                    <div>
+                                        <span>FROM</span>
+
+                                        <strong>
+                                            {{ ride["origin"] }}
+                                        </strong>
+                                    </div>
+
+
+                                    <div
+                                        class="sq-route-result-arrow"
+                                        aria-hidden="true"
+                                    >
+                                        →
+                                    </div>
+
+
+                                    <div>
+                                        <span>TO</span>
+
+                                        <strong>
+                                            {{ ride["destination"] }}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="sq-ride-result-meta">
+
+                                    <span>
+                                        DATE
+
+                                        <strong>
+                                            {{ ride["travel_date"] }}
+                                        </strong>
+                                    </span>
+
+                                    <span>
+                                        TIME
+
+                                        <strong>
+                                            {{ ride["travel_time"] }}
+                                        </strong>
+                                    </span>
+
+                                    <span>
+                                        SEATS
+
+                                        <strong>
+                                            {{ ride["seats"] }}
+                                        </strong>
+                                    </span>
+
+                                    <span>
+                                        EST. FARE
+
+                                        <strong>
+                                            ₹{{ ride["estimated_fare"] }}
+                                        </strong>
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="sq-ride-result-side">
+
+                                <div class="sq-ride-result-icon">
+                                    🚗
+                                </div>
+
+                                <a
+                                    href="/quest/{{ ride['quest_id'] }}"
+                                    class="btn btn-secondary"
+                                >
+                                    View Ride →
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <div class="sq-ride-empty">
+
+                    <div class="sq-ride-empty-icon">
+                        🚗
+                    </div>
+
+                    <h3>
+                        No matching rides.
+                    </h3>
+
+                    <p>
+                        Try another route or date, or post your own ride.
+                    </p>
+
+                    <a
+                        href="/create"
+                        class="btn btn-primary"
+                    >
+                        Offer a Ride →
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+    {% else %}
+
+        <!-- EMPTY SEARCH STATE -->
+        <section class="sq-ride-preview">
+
+            <div class="sq-ride-preview-copy">
+
+                <span class="sq-panel-kicker">
+                    HOW IT WORKS
+                </span>
+
+                <h2>
+                    Same route?
+                    <span>Share it.</span>
+                </h2>
+
+                <p>
+                    SideQuest checks the campus board for rides matching
+                    your origin, destination and travel date.
+                </p>
+
+            </div>
+
+
+            <div class="sq-ride-steps">
+
+                <div class="sq-ride-step">
+
+                    <span>01</span>
+
+                    <strong>
+                        Choose your route
+                    </strong>
+
+                </div>
+
+
+                <div
+                    class="sq-ride-step-line"
+                    aria-hidden="true"
+                ></div>
+
+
+                <div class="sq-ride-step">
+
+                    <span>02</span>
+
+                    <strong>
+                        Pick your date
+                    </strong>
+
+                </div>
+
+
+                <div
+                    class="sq-ride-step-line"
+                    aria-hidden="true"
+                ></div>
+
+
+                <div class="sq-ride-step">
+
+                    <span>03</span>
+
+                    <strong>
+                        Join the ride
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    {% endif %}
 
 </section>
 
