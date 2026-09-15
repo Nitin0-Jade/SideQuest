@@ -69,5 +69,58 @@
             <p>Resolved</p>
         {% endif %}
     {% endif %}
-        
+
+    {% if expense %}
+
+        <div class="card mt-4">
+            <div class="card-body">
+
+                <h2>Expense Split</h2>
+
+                <p>
+                    <strong>Description:</strong>
+                    {{ expense["description"] }}
+                </p>
+
+                <p>
+                    <strong>Total Amount:</strong>
+                    ₹{{ expense["amount"] }}
+                </p>
+
+                <p>
+                    <strong>People Joined:</strong>
+                    {{ expense_participants|length }}
+                </p>
+
+                {% if expense_share %}
+                    <p>
+                        <strong>Share per person:</strong>
+                        ₹{{ "%.2f"|format(expense_share) }}
+                    </p>
+                {% endif %}
+
+                <h5>Participants</h5>
+
+                {% if expense_participants %}
+
+                    <ul>
+                        {% for participant in expense_participants %}
+                            <li>{{ participant["username"] }}</li>
+                        {% endfor %}
+                    </ul>
+
+                {% else %}
+
+                    <p>No one has joined yet.</p>
+
+                {% endif %}
+
+                {% if quest["status"] == "open" %}
+                    <form action="/expense/{{ expense['id'] }}/join" method="post">
+                        <button type="submit" class="btn btn-primary">Join Expense</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

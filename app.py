@@ -294,6 +294,17 @@ def quest(quest_id):
         total_seats = carpool["seats"]
         available_seats = total_seats - participant_count
 
+    expense = connection.execute("SELECT * FROM expenses WHERE quest_id = ?",(quest_id,)).fetchone()
+    expense_participants = []
+
+    if expense:
+        expense_participants = connection.execute("SELECT users.username FROM expense_participants JOIN users ON expense_participants.user_id = users.id WHERE expense_participants.expense_id = ?",(expense["id"],)).fetchall()
+        
+    expense_share = None
+
+    if expense and expense_participants:
+        expense_share = expense["amount"] / len(expense_participants)
+
     connection.close()
 
     return render_template(
@@ -305,7 +316,10 @@ def quest(quest_id):
         total_seats=total_seats,
         available_seats=available_seats,
         fare_per_person=fare_per_person,
-        estimated_fare=estimated_fare
+        estimated_fare=estimated_fare,
+        expense=expense,
+        expense_participants=expense_participants,
+        expense_share=expense_share
     )
 
 
