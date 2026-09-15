@@ -143,13 +143,13 @@ def create():
 
         if not title:
             return "Please give valid Title"
-        if len(title)<0 or len(title)>10:
-            return "Please use a Valid title of 10 words"
+        if len(title)>100:
+            return "Please use a Valid title of 100 characters"
         
         if not description:
             return "Please give a Valid description"
-        if len(description)<0 or len(description)>100:
-            return "Please write within limit(100 words)"
+        if len(description)>1000:
+            return "Please write within limit(1000 characters)"
         
         if not category:
             return "Please return a valid category"
@@ -222,9 +222,25 @@ def create():
             
             lost_items_fields=connection.execute("INSERT INTO lost_items(quest_id,item_name,description,location,type) VALUES(?,?,?,?,?)",(quest_id,item_name,description,location,Type))
         
+        if category=="expense":
+            amount=request.form.get("amount")
+            try:
+                amount = float(amount)
+            except ValueError:
+                return "Please enter valid amount", 400
+            if amount is None:
+                return "Enter a valid amount"
+            
+            if amount <= 0:
+                return "Amount must be greater than 0", 400
+
+            user_id = session["user_id"]
+
+            new_quest=connection.execute("INSERT INTO quests(title,description,category,user_id) VALUES(?,?,?,?) ",(title,description,category,user_id))
         
+            quest_id=new_quest.lastrowid
 
-
+            expense_fields=connection.execute("INSERT INTO expenses(quest_id,description,amount) VALUES(?,?,?)",(quest_id,description,amount))
 
         connection.commit()
         connection.close()
@@ -408,7 +424,8 @@ def findride():
 
         connection = get_db()
 
-        matching_rides = connection.execute("SELECT
+        matching_rides = connection.execute(
+            """SELECT
             quests.id AS quest_id,
             quests.title,
             quests.description,
@@ -426,7 +443,7 @@ def findride():
             WHERE carpools.origin = ?
             AND carpools.destination = ?
             AND carpools.travel_date = ?
-            ",
+            """,
             (origin, destination, travel_date)).fetchall()
         connection.close()
 
@@ -481,7 +498,7 @@ def complete(quest_id):
     return redirect(f"/quest/{quest_id}")
 
 
-@app.route("/quest/[int:quest_id](int:quest_id)/resolve", methods=["POST"])
+@app.route("/quest/<int:quest_id>/resolve", methods=["POST"])
 @login_required
 def resolve(quest_id):
     user_id = session["user_id"]
@@ -513,7 +530,45 @@ def resolve(quest_id):
 
     return redirect(f"/quest/{quest_id}")
 
+@app.route("/expense/<int:expense_id>/join", methods=["POST"])
+@login_required
+def participant(expense_id):
 
+    user_id = session["user_id"]
 
+    connection = get_db()
 
+    expense = connection.execute(
+        "SELECT * FROM expenses WHERE id = ?",
+        (expense_id,)
+    ).fetchone()
 
+    if expense is None:
+        connection.close()
+        return "Expense not found", 404
+
+    existing = connection.execute(
+        """
+        SELECT *
+        FROM expense_participants
+        WHERE expense_id = ? AND user_id = ?
+        """,
+        (expense_id, user_id)
+    ).fetchone()
+
+    if existing:
+        connection.close()
+        return "You already joined this expense", 400
+
+    connection.execute(
+        """
+        INSERT INTO expense_participants (expense_id, user_id)
+        VALUES (?, ?)
+        """,
+        (expense_id, user_id)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return redirect(f"/quest/{expense['quest_id']}")
