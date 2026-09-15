@@ -2010,7 +2010,7 @@ label {
 /* =========================================================
    CREATE QUEST — PREMIUM FORM
 ========================================================= */
-
+}
 .create-page {
     max-width: 980px;
     margin: 0 auto;
@@ -5590,5 +5590,4 @@ label {
     .sq-ride-result-card {
         animation: none;
     }
-}
 }
