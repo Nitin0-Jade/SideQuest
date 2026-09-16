@@ -305,6 +305,9 @@ def quest(quest_id):
     expense = connection.execute("SELECT * FROM expenses WHERE quest_id = ?",(quest_id,)).fetchone()
     expense_participants = []
 
+    else:
+        estimated_fare = None
+
     if expense:
         expense_participants = connection.execute("SELECT users.username FROM expense_participants JOIN users ON expense_participants.user_id = users.id WHERE expense_participants.expense_id = ?",(expense["id"],)).fetchall()
         

@@ -5590,4 +5590,32 @@ label {
     .sq-ride-result-card {
         animation: none;
     }
+
+/* =========================================================
+   CREATE QUEST — COMPACT BASICS LAYOUT
+   Title + Description side-by-side
+========================================================= */
+
+.create-section:first-child .create-grid {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    align-items: start;
+}
+
+.create-section:first-child .create-field-full {
+    grid-column: auto;
+}
+
+.create-section:first-child .create-field textarea {
+    min-height: 120px;
+}
+
+@media (max-width: 700px) {
+    .create-section:first-child .create-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .create-section:first-child .create-field-full {
+        grid-column: auto;
+    }
+}
 }

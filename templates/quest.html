@@ -33,6 +33,7 @@
 
         {% endif %}
 
+
         {% if quest["status"] == "open" %}
 
             <span class="sq-detail-status sq-detail-status-open">
@@ -54,9 +55,11 @@
         {{ quest["title"] }}
     </h1>
 
+
     <p class="sq-detail-description">
         {{ quest["description"] }}
     </p>
+
 
     <div class="sq-detail-id">
         QUEST #{{ "%04d"|format(quest["id"]) }}
@@ -71,189 +74,539 @@
 
 {% if carpool %}
 
-<div class="sq-detail-panel sq-carpool-panel">
+    <div class="sq-detail-panel sq-carpool-panel">
 
-    <div class="sq-panel-header">
+        <div class="sq-panel-header">
 
-        <div>
-            <span class="sq-panel-kicker">
-                THE RIDE
-            </span>
+            <div>
+                <span class="sq-panel-kicker">
+                    THE RIDE
+                </span>
 
-            <h2>
-                Your route awaits.
-            </h2>
-        </div>
-
-        <div class="sq-panel-big-icon">
-            🚗
-        </div>
-
-    </div>
+                <h2>
+                    Your route awaits.
+                </h2>
+            </div>
 
 
-    <div class="sq-route-box">
-
-        <div class="sq-location">
-
-            <span class="sq-location-label">
-                FROM
-            </span>
-
-            <strong>
-                {{ carpool["origin"] }}
-            </strong>
+            <div class="sq-panel-big-icon">
+                🚗
+            </div>
 
         </div>
 
 
-        <div class="sq-route-line">
+        <div class="sq-route-box">
 
-            <span class="sq-route-dot"></span>
+            <div class="sq-location">
 
-            <span class="sq-route-dashes"></span>
-
-            <span class="sq-route-arrow">
-                →
-            </span>
-
-        </div>
-
-
-        <div class="sq-location">
-
-            <span class="sq-location-label">
-                TO
-            </span>
-
-            <strong>
-                {{ carpool["destination"] }}
-            </strong>
-
-        </div>
-
-    </div>
-
-
-    <div class="sq-stats">
-
-        <div class="sq-stat">
-
-            <span class="sq-stat-label">
-                DATE
-            </span>
-
-            <span class="sq-stat-value">
-                {{ carpool["travel_date"] }}
-            </span>
-
-        </div>
-
-
-        <div class="sq-stat">
-
-            <span class="sq-stat-label">
-                TIME
-            </span>
-
-            <span class="sq-stat-value">
-                {{ carpool["travel_time"] }}
-            </span>
-
-        </div>
-
-
-        <div class="sq-stat">
-
-            <span class="sq-stat-label">
-                SEATS
-            </span>
-
-            <span class="sq-stat-value">
-                {{ available_seats }}/{{ total_seats }}
-            </span>
-
-        </div>
-
-
-        <div class="sq-stat">
-
-            <span class="sq-stat-label">
-                EST. FARE
-            </span>
-
-            <span class="sq-stat-value">
-                ₹{{ estimated_fare }}
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <div class="sq-fare-box">
-
-        <div>
-
-            <span class="sq-panel-kicker">
-                FAIR SHARE
-            </span>
-
-            {% if fare_per_person is not none %}
+                <span class="sq-location-label">
+                    FROM
+                </span>
 
                 <strong>
-                    ₹{{ "%.2f"|format(fare_per_person) }}
+                    {{ carpool["origin"] }}
                 </strong>
 
-                <small>
-                    estimated per participant
-                </small>
+            </div>
+
+
+            <div class="sq-route-line">
+
+                <span class="sq-route-dot"></span>
+
+                <span class="sq-route-dashes"></span>
+
+                <span class="sq-route-arrow">
+                    →
+                </span>
+
+            </div>
+
+
+            <div class="sq-location">
+
+                <span class="sq-location-label">
+                    TO
+                </span>
+
+                <strong>
+                    {{ carpool["destination"] }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="sq-stats">
+
+            <div class="sq-stat">
+
+                <span class="sq-stat-label">
+                    DATE
+                </span>
+
+                <span class="sq-stat-value">
+                    {{ carpool["travel_date"] }}
+                </span>
+
+            </div>
+
+
+            <div class="sq-stat">
+
+                <span class="sq-stat-label">
+                    TIME
+                </span>
+
+                <span class="sq-stat-value">
+                    {{ carpool["travel_time"] }}
+                </span>
+
+            </div>
+
+
+            <div class="sq-stat">
+
+                <span class="sq-stat-label">
+                    SEATS
+                </span>
+
+                <span class="sq-stat-value">
+                    {{ available_seats }}/{{ total_seats }}
+                </span>
+
+            </div>
+
+
+            <div class="sq-stat">
+
+                <span class="sq-stat-label">
+                    EST. FARE
+                </span>
+
+                <span class="sq-stat-value">
+                    ₹{{ estimated_fare }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="sq-fare-box">
+
+            <div>
+
+                <span class="sq-panel-kicker">
+                    FAIR SHARE
+                </span>
+
+
+                {% if fare_per_person is not none %}
+
+                    <strong>
+                        ₹{{ "%.2f"|format(fare_per_person) }}
+                    </strong>
+
+                    <small>
+                        estimated per participant
+                    </small>
+
+                {% else %}
+
+                    <strong>
+                        —
+                    </strong>
+
+                    <small>
+                        waiting for participants
+                    </small>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="sq-seat-display">
+
+                <span class="sq-seat-number">
+                    {{ participant_count }}
+                </span>
+
+                <span class="sq-seat-label">
+                    JOINED
+                </span>
+
+            </div>
+
+        </div>
+
+
+        {% if quest["status"] == "open" %}
+
+            <div class="sq-action-row">
+
+                <form
+                    action="/quest/{{ quest['id'] }}/join"
+                    method="post"
+                >
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary sq-big-action"
+                    >
+                        Join This Ride →
+                    </button>
+
+                </form>
+
+
+                {% if quest["user_id"] == session["user_id"] %}
+
+                    <form
+                        action="/quest/{{ quest['id'] }}/complete"
+                        method="post"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn btn-secondary"
+                        >
+                            Complete Ride
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+        {% else %}
+
+            <div class="sq-completed-banner">
+                This ride has already been completed.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+{% endif %}
+
+
+<!-- =================================================
+     LOST & FOUND
+================================================= -->
+
+{% if lost_item %}
+
+    <div class="sq-detail-panel">
+
+        <div class="sq-panel-header">
+
+            <div>
+                <span class="sq-panel-kicker">
+                    LOST &amp; FOUND
+                </span>
+
+                <h2>
+                    Help recover this item.
+                </h2>
+            </div>
+
+
+            <div class="sq-panel-big-icon">
+                🔎
+            </div>
+
+        </div>
+
+
+        <div class="sq-lost-object">
+
+            <div class="sq-lost-icon">
+                🔎
+            </div>
+
+
+            <div>
+
+                <span class="sq-panel-kicker">
+                    ITEM
+                </span>
+
+                <h3>
+                    {{ lost_item["item_name"] }}
+                </h3>
+
+            </div>
+
+        </div>
+
+
+        <div class="sq-info-grid">
+
+            <div class="sq-info-card">
+
+                <span>
+                    LOCATION
+                </span>
+
+                <strong>
+                    {{ lost_item["location"] }}
+                </strong>
+
+            </div>
+
+
+            <div class="sq-info-card">
+
+                <span>
+                    TYPE
+                </span>
+
+                <strong>
+                    {{ lost_item["type"] }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="sq-expense-description">
+
+            <span class="sq-panel-kicker">
+                DESCRIPTION
+            </span>
+
+            <p>
+                {{ lost_item["description"] }}
+            </p>
+
+        </div>
+
+
+        {% if quest["status"] == "open" %}
+
+            {% if quest["user_id"] == session["user_id"] %}
+
+                <div class="sq-action-row">
+
+                    <form
+                        action="/quest/{{ quest['id'] }}/resolve"
+                        method="post"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary sq-big-action"
+                        >
+                            Mark as Resolved →
+                        </button>
+
+                    </form>
+
+                </div>
 
             {% else %}
 
-                <strong>
-                    —
-                </strong>
-
-                <small>
-                    waiting for participants
-                </small>
+                <div class="sq-help-banner">
+                    Found this item? Connect with the student who
+                    posted it and help get it back to its owner.
+                </div>
 
             {% endif %}
 
-        </div>
+        {% else %}
 
+            <div class="sq-completed-banner">
+                This lost &amp; found quest has been resolved.
+            </div>
 
-        <div class="sq-seat-display">
-
-            <span class="sq-seat-number">
-                {{ participant_count }}
-            </span>
-
-            <span class="sq-seat-label">
-                JOINED
-            </span>
-
-        </div>
+        {% endif %}
 
     </div>
 
-
-    {% if quest["status"] == "open" %}
-
-        <div class="sq-action-row">
-
-            <form
-                action="/quest/{{ quest['id'] }}/join"
-                method="post"
-            >
-                <button
-                    type="submit"
-                    class="btn btn-primary sq-big-action"
-                >
-                    Join This Ride →
-                </button>
-            </form>
+{% endif %}
 
 
-            {% if quest["user_id"] == session["user_id"] %_]()_]()
+<!-- =================================================
+     EXPENSE
+================================================= -->
+
+{% if expense %}
+
+    <div class="sq-detail-panel">
+
+        <div class="sq-panel-header">
+
+            <div>
+                <span class="sq-panel-kicker">
+                    EXPENSE SPLIT
+                </span>
+
+                <h2>
+                    Keep the math fair.
+                </h2>
+            </div>
+
+
+            <div class="sq-panel-big-icon">
+                💰
+            </div>
+
+        </div>
+
+
+        <div class="sq-expense-total">
+
+            <span>
+                TOTAL EXPENSE
+            </span>
+
+            <strong>
+                ₹{{ "%.2f"|format(expense["amount"]) }}
+            </strong>
+
+        </div>
+
+
+        {% if expense_share is not none %}
+
+            <div class="sq-expense-share">
+
+                <div>
+
+                    <span class="sq-panel-kicker">
+                        YOUR ESTIMATED SHARE
+                    </span>
+
+                    <strong>
+                        ₹{{ "%.2f"|format(expense_share) }}
+                    </strong>
+
+                    <small>
+                        based on current participants
+                    </small>
+
+                </div>
+
+
+                <div class="sq-expense-people">
+
+                    <span class="sq-people-number">
+                        {{ expense_participants|length }}
+                    </span>
+
+                    <span class="sq-people-label">
+                        PEOPLE
+                    </span>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="sq-expense-description">
+
+            <span class="sq-panel-kicker">
+                DETAILS
+            </span>
+
+            <p>
+                {{ quest["description"] }}
+            </p>
+
+        </div>
+
+
+        {% if expense_participants %}
+
+            <div class="sq-participant-section">
+
+                <span class="sq-panel-kicker">
+                    PARTICIPANTS
+                </span>
+
+                <div class="sq-participants">
+
+                    {% for participant in expense_participants %}
+
+                        <span class="sq-person">
+                            {{ participant["username"] }}
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+
+        {% if quest["status"] == "open" %}
+
+            {% if quest["user_id"] == session["user_id"] %}
+
+                <div class="sq-help-banner">
+                    You created this expense quest.
+                    Participants are automatically included
+                    in the split when they join.
+                </div>
+
+            {% else %}
+
+                <div class="sq-action-row">
+
+                    <form
+                        action="/expense/{{ expense['id'] }}/join"
+                        method="post"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary sq-big-action"
+                        >
+                            Join Expense →
+                        </button>
+
+                    </form>
+
+                </div>
+
+            {% endif %}
+
+        {% else %}
+
+            <div class="sq-completed-banner">
+                This expense quest is completed.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+{% endif %}
+
+
+<!-- BACK -->
+<div class="sq-back-row">
+
+    <a
+        href="/"
+        class="sq-back-link"
+    >
+        ← Back to Quest Board
+    </a>
+
+</div>
+
+</section>
+
+{% endblock %}
