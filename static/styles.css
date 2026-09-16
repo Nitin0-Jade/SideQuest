@@ -5590,32 +5590,98 @@ label {
     .sq-ride-result-card {
         animation: none;
     }
-
-/* =========================================================
-   CREATE QUEST — COMPACT BASICS LAYOUT
-   Title + Description side-by-side
-========================================================= */
-
-.create-section:first-child .create-grid {
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-    align-items: start;
 }
 
-.create-section:first-child .create-field-full {
-    grid-column: auto;
+/* ================================
+   QUEST DETAIL LAYOUT FIX
+================================ */
+
+.sq-stats {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+    width: 100%;
 }
 
-.create-section:first-child .create-field textarea {
-    min-height: 120px;
+.sq-stat {
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 0;
 }
 
+.sq-route-box {
+    display: grid !important;
+    grid-template-columns: 1fr auto 1fr !important;
+    align-items: center !important;
+    gap: 24px !important;
+}
+
+.sq-location {
+    min-width: 0;
+}
+
+.sq-route-line {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: row !important;
+}
+
+.sq-fare-box {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 24px !important;
+}
+
+.sq-action-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+}
+
+.sq-info-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+}
+
+.sq-expense-share {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 24px !important;
+}
+
+.sq-participants {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+}
+
+/* Mobile */
 @media (max-width: 700px) {
-    .create-section:first-child .create-grid {
-        grid-template-columns: 1fr;
+
+    .sq-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     }
 
-    .create-section:first-child .create-field-full {
-        grid-column: auto;
+    .sq-route-box {
+        grid-template-columns: 1fr !important;
     }
-}
+
+    .sq-route-line {
+        transform: rotate(90deg);
+    }
+
+    .sq-info-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .sq-fare-box,
+    .sq-expense-share {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
 }
